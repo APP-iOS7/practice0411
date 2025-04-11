@@ -7,14 +7,17 @@ struct TodoView: View {
     
     var body: some View {
         NavigationStack{
-            VStack {
-                ForEach(viewModel.fetchTodos()) {item in
+            VStack(alignment: .leading) {
+                ForEach([Todo.empty()]) {item in
                     NavigationLink(destination: TodoDetailView()) {
-                        TodoItemView()
+                        TodoItemView(todoItem: item)
                     }
+                    .foregroundStyle(.black)
                 }
+                
                 Spacer()
             }
+            .padding()
             .navigationTitle(Text("Todo"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -23,6 +26,9 @@ struct TodoView: View {
             }
         }
         .sheet(isPresented: $viewModel.showAddTodoView, content: { AddTodoView() })
+        .onAppear() {
+            viewModel.fetchTodos()
+        }
     }
     
 }

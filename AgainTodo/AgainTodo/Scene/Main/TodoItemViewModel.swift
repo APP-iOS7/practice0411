@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+class TodoItemViewModel: ObservableObject {
+    @Published var gridRatio:CGFloat = 0.3
+}
