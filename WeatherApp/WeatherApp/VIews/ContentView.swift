@@ -9,9 +9,8 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
-    
     @StateObject var viewModel = WeatherViewModel()
-    
+    @State var weatherSymbol = WeatherSymbol()
     var body: some View {
         if viewModel.isLoading {
             ProgressView("날씨 정보를 가져오는 중...")
@@ -21,7 +20,7 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 HStack {
-                    Label("",systemImage: "sun.max.fill")
+                    Label("",systemImage: weatherSymbol.toSFSymbol(weatherDescription:  viewModel.weather.description))
                         .font(.largeTitle)
                     Text("\(viewModel.weather.temperature, specifier: "%.1f") °C")
                         .font(.largeTitle)
@@ -30,7 +29,7 @@ struct ContentView: View {
                         .font(.largeTitle)
                 }
                 Spacer()
-                
+
                 Text("습도: \(viewModel.weather.humdity, specifier: "%.1f") %")
                     .font(.title)
                 Spacer()
