@@ -8,49 +8,63 @@
 import SwiftUI
 import SwiftData
 
+/// 날씨 테스트 데이터
+enum WeatherCondition: String {
+    case clear
+    case rainy
+    case cloudy
+    case snowy
+}
+
+
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    // 데모 데이터
+    /// 섭씨 온도
+    var temperature: Double = 24.0
+    
+    /// 날씨 설명
+    var description: String = "맑음"
+    
+    /// 습도
+    var humdity: Double = 70
+    
+    /// 풍속
+    var windSpeed: Double = 39
+    
+    /// 날씨에 맞는 옷차림
+    var clothes: String = "점퍼"
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        
+        VStack {
+            Spacer()
+            HStack {
+                Label("",systemImage: "sun.max.fill")
+                    .font(.largeTitle)
+                Text("\(temperature, specifier: "%.1f") °C")
+                    .font(.largeTitle)
+                    .padding(.trailing, 10)
+                Text(description)
+                    .font(.largeTitle)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            Spacer()
+            
+            HStack {
+                Text("습도: \(humdity, specifier: "%.1f") %")
+                    .font(.title)
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            Spacer()
+            
+            HStack {
+                Text("풍속: \(windSpeed, specifier: "%.1f") m/s")
+                    .font(.title)
             }
+            Spacer()
+            
+            HStack {
+                Text("추천 옷차림: \(clothes)")
+                    .font(.title)
+            }
+            Spacer()
         }
     }
 }
