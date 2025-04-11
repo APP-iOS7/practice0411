@@ -12,11 +12,8 @@ import CoreLocation
 class LocationService: NSObject {
     
     static let shared = LocationService()
-    
     private let locationManager = CLLocationManager()
-    
     weak var delegate: (any CLLocationManagerDelegate)?
-    
     private var currentLocation: CLLocation?
     
     override init() {
