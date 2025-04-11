@@ -9,6 +9,7 @@ import Foundation
 import WeatherKit
 import CoreLocation
 
+// MARK: - 날씨 서비스 클래스
 class WeatherService {
     
     static let shared = WeatherService()
@@ -21,6 +22,7 @@ class WeatherService {
             
         let currentWeather = weather.currentWeather
         
+        // WeatherData 데이터로 반환
         return WeatherData(temperature: currentWeather.temperature.value,
                            description: currentWeather.condition.description,
                            humidity: currentWeather.humidity,
