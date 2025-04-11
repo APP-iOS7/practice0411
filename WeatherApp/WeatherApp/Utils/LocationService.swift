@@ -8,11 +8,24 @@
 import Foundation
 import CoreLocation
 
+// MARK: - 위치 서비스 델리게이트 프로토콜
+protocol LocationServiceDelegate: AnyObject {
+    // 위치가 업데이트되었을 때 호출
+    func locationDidUpdate(location: CLLocation)
+    
+    // 위치 권한이 변경되었을 때 호출
+    func locationAuthorizationDidChange(status: CLAuthorizationStatus)
+    
+    // 위치 서비스에서 오류가 발생했을 때 호출
+    func locationDidFailWithError(error: Error)
+}
+
 // MARK: - 위치 서비스 클래스
 class LocationService: NSObject, ObservableObject {
     
     static let shared = LocationService()
     private let locationManager = CLLocationManager()
+    weak var delegate: LocationServiceDelegate?
     
     @Published var location: CLLocation?
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -32,7 +45,7 @@ class LocationService: NSObject, ObservableObject {
     }
     
     // 위치 권한
-    func requestWhenInUseAuthorization() {
+    func requestLocationAuthorization() {
         locationManager.requestWhenInUseAuthorization()
     }
     
