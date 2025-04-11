@@ -24,21 +24,23 @@ struct ContentView: View {
                     Text("현재 풍속: \(String(format: "%.1f", viewModel.weather?.windSpeed ?? 0.0)) m/s")
                 }
                 Section("위치 정보") {
-                    Button("현재 위치 사용", action: {
+                    Button("현재 위치 날씨 확인", action: {
                         Task {
                             await viewModel.fetchWeather()
+                            latitude = viewModel.location.coordinate.latitude.description
+                            longitude = viewModel.location.coordinate.longitude.description
                         }
                     })
                     VStack(alignment: HorizontalAlignment.leading) {
                         Spacer()
-                        Text("위치 직접 입력")
-                        Spacer()
                         VStack {
-                            TextField("위도                    Example) 37.33473020", text: $latitude)
-                            TextField("경도                    Example) 122.00891890", text: $longitude)
+                            TextField("위도(-90 ~ 90)      Ex) 37.33473020", text: $latitude)
+                            Divider()
+                            TextField("경도(-180 ~ 180)   Ex) 122.00891890", text: $longitude)
                         }
                         Spacer()
-                        Button("확인", action: {
+                        Spacer()
+                        Button("위치 직접 입력", action: {
                             Task {
                                 viewModel.error = nil
                                 await viewModel.fetchCustomLocationWeather(latitude, longitude)
@@ -52,7 +54,6 @@ struct ContentView: View {
                         .listRowBackground(Color.clear)
                 }
                 .foregroundStyle(.red)
-                //                ProgressView()
             }
             
             .navigationTitle("Weather App")
@@ -60,13 +61,16 @@ struct ContentView: View {
                 ToolbarItem(placement: .topBarTrailing,
                             content: {
                     Button("새로고침", action: {
+                        viewModel.error = nil
                         viewModel.resetWeather()
+                        latitude = ""
+                        longitude = ""
                     })
                 })
                 ToolbarItem(placement: .topBarLeading,
                             content: {
                     Button("다크모드", action: {
-//                        viewModel.resetWeather()
+//                        TODO: 다크모드
                     })
                 })
             })
