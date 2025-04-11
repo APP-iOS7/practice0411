@@ -45,12 +45,14 @@ struct ContentView: View {
             HStack {
                 Text("위도: ")
                 TextField("", text: $latitude)
+                    .tint(.gray)
                     .textFieldStyle(.roundedBorder)
             }
             
             HStack {
                 Text("경도: ")
                 TextField("", text: $longitude)
+                    .tint(.gray)
                     .textFieldStyle(.roundedBorder)
             }
             

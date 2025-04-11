@@ -11,13 +11,7 @@ struct WeatherData: Codable {
     let description: String
     let humidity: Double
     let windSpeed: Double
-    
-    init(temperature: Double, description: String, humidity: Double, windSpeed: Double) {
-        self.temperature = temperature
-        self.description = description
-        self.humidity = humidity
-        self.windSpeed = windSpeed
-    }
+
     
     init(weather: CurrentWeather) {
         self.temperature = weather.temperature.value
@@ -25,8 +19,4 @@ struct WeatherData: Codable {
         self.humidity = weather.humidity
         self.windSpeed = weather.wind.speed.value
     }
-}
-
-extension WeatherData {
-    static let empty: WeatherData = WeatherData(temperature: 0, description: "", humidity: 0, windSpeed: 0)
 }
