@@ -12,4 +12,5 @@ struct WeatherData: Codable {
     var description: String
     var humidity: Double
     var windSpeed: Double
+    var symbolName: String
 }

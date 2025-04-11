@@ -22,7 +22,8 @@ public class WeatherService {
             temperature: currentWeather.temperature.value,
             description: currentWeather.condition.description,
             humidity: currentWeather.humidity,
-            windSpeed: currentWeather.wind.speed.value
+            windSpeed: currentWeather.wind.speed.value,
+            symbolName: currentWeather.symbolName
         )
     }
 }
