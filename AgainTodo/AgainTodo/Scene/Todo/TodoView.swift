@@ -56,7 +56,11 @@ struct TodoView: View {
             }
         }
         .sheet(isPresented: $viewModel.showAddTodoView, onDismiss: {viewModel.fetchTodos()}, content: { AddTodoView() })
+        .onAppear {
+            LocationManager().requestLocation()
+        }
     }
+    
     
 }
 
