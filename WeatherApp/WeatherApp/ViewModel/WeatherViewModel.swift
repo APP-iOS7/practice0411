@@ -13,12 +13,15 @@ enum APIError: Error, LocalizedError {
     case permissionDenied
     case unknownError
     case typeDenied
+    case rangeError
     
     var errorDescription: String? {
         switch self {
         case .permissionDenied: return WeatherError.permissionDenied.errorDescription
         case .unknownError: return "알 수 없는 오류"
         case .typeDenied: return "올바른 타입이 아닙니다."
+        case .rangeError: return "위도 경도의 올바른 범위가 아닙니다."
+
         }
     }
 }
@@ -48,6 +51,11 @@ class WeatherViewModel: ObservableObject {
             guard let latDouble = Double(latitude), let longDouble = Double(longitude) else {
                 throw APIError.typeDenied
             }
+            
+            guard latDouble >= -90, latDouble <= 90, longDouble >= -180, longDouble <= 180 else {
+                throw APIError.rangeError
+            }
+
             isLoading = true
             let customLocation = CLLocationCoordinate2D(latitude: latDouble, longitude: longDouble)
             location = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
@@ -57,6 +65,7 @@ class WeatherViewModel: ObservableObject {
             self.error = error
             debugPrint(error.localizedDescription)
         } catch {
+            self.error = error
             debugPrint("예상치 못한 오류 \(error)")
         }
     }
