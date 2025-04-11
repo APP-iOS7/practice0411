@@ -44,7 +44,7 @@ struct ContentView: View {
             VStack {
               Text("습도")
                 .font(.headline)
-              Text("\(Int(weather.humidity))%")
+              Text("\(Int(weather.humidity*100))%")
                 .font(.title3)
             }
             
