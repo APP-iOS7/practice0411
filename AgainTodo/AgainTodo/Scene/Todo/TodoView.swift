@@ -10,7 +10,7 @@ struct TodoView: View {
             VStack(alignment: .leading) {
                 ScrollView {
                     ForEach(viewModel.todos.indices, id: \.self) {index in
-                        NavigationLink(destination: TodoDetailView()) {
+                        NavigationLink(destination: TodoDetailView(todo: viewModel.todos[index])) {
                             HStack {
                                 if viewModel.showCheckBox {
                                     Toggle("", systemImage: viewModel.todos[index].isDone ? "checkmark.square.fill" : "square",isOn: $viewModel.todos[index].isDone)

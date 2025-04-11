@@ -8,11 +8,16 @@
 import SwiftUI
 
 struct TodoDetailView: View {
+    let todo: Todo
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(todo.title)
+        Text(todo.detail)
+        Text(todo.deadline?.description ?? "")
+        Text(todo.isDone ? "Done" : "Not Done")
     }
 }
 
 #Preview {
-    TodoDetailView()
+    TodoDetailView(todo: Todo.empty())
 }
