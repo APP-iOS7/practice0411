@@ -18,18 +18,25 @@ struct ContentView: View {
     private let locationService = LocationService.shared
 
     var body: some View {
-        VStack {
-            if let weather = viewModel.weather {
-                Text("기온: \(weather.temperature)")
-                Text("습도: \(weather.humidity)")
-                Text("풍속: \(weather.windSpeed)")
-                Text("\(weather.description)")
-            } else {
-                Text("날씨 정보 로딩중...")
+        VStack(spacing: 8) {
+            if let weather = viewModel.weather, viewModel.error == nil {
+                let temperature = String(format: "%.1f", weather.temperature)
+                let humidity = String(format: "%.1f", weather.humidity * 100)
+                let windSpeed = String(format: "%.1f", weather.windSpeed)
+                
+                Text("기온: \(temperature) °C")
+                Text("습도: \(humidity) %")
+                Text("풍속: \(windSpeed) m/s")
+                Image(systemName: weather.description)
+            }
+            
+            if let error = viewModel.error {
+                Text(error.localizedDescription)
+                    .foregroundStyle(.red)
             }
             
             Spacer()
-                .frame(height: 30)
+                .frame(height: 50)
             
             HStack {
                 Text("위도: ")

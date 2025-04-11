@@ -11,7 +11,6 @@ import CoreLocation
 final class LocationService: NSObject {
     static let shared: LocationService = LocationService()
     var locationManager: CLLocationManager = CLLocationManager()
-    var currentLocation: CLLocation?
     
     private var subject = PassthroughSubject<CLLocation, Never>()
     var locationPublisher: AnyPublisher<CLLocation, Never> {

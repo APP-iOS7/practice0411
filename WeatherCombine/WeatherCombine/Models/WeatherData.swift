@@ -21,7 +21,7 @@ struct WeatherData: Codable {
     
     init(weather: CurrentWeather) {
         self.temperature = weather.temperature.value
-        self.description = weather.condition.description
+        self.description = weather.symbolName.description
         self.humidity = weather.humidity
         self.windSpeed = weather.wind.speed.value
     }
