@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreLocation
 
+// TODO: ViewModel 생성 후 View 연결
 struct ContentView: View {
     
     @State private var weather: WeatherData?
@@ -80,10 +81,10 @@ struct WeatherInfoView: View {
             LinearGradient(
             colors: [
                 Color(hex: "#CCE0FF"),
-                Color(hex: "#99BFFF")
+                Color(hex: "#0120E0")
             ],
-            startPoint: .topTrailing,
-            endPoint: .bottomLeading))
+            startPoint: .top,
+            endPoint: .bottomTrailing))
         .cornerRadius(12)
     }
     

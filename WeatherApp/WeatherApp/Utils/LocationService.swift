@@ -52,7 +52,7 @@ class LocationService: NSObject {
     }
 }
 
-// MARK: - 위치 서비스 클래스 CLLocationManagerDelegate
+// TODO: - 위치 서비스 클래스 CLLocationManagerDelegate
 extension LocationService: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
