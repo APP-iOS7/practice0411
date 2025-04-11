@@ -39,6 +39,7 @@ class WeatherViewModel: ObservableObject {
             let locationService = LocationService()
             locationService.requestLocation()
             location = locationService.setCurrentCLLocation()
+            try await Task.sleep(nanoseconds: 500_000_000)
             weather = try await WeatherService.fetchWeather(for: self.location)
             isLoading = false
         } catch {

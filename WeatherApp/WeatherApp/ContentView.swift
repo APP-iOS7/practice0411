@@ -30,13 +30,18 @@ struct ContentView: View {
                     Text("현재 풍속: \(String(format: "%.1f", viewModel.weather?.windSpeed ?? 0.0)) m/s")
                 }
                 Section("위치 정보") {
-                    Button("현재 위치 날씨 확인", action: {
-                        Task {
-                            await viewModel.fetchWeather()
-                            latitude = viewModel.location.coordinate.latitude.description
-                            longitude = viewModel.location.coordinate.longitude.description
+                    HStack {
+                        Button("현재 위치 날씨 확인", action: {
+                            Task {
+                                await viewModel.fetchWeather()
+                                latitude = viewModel.location.coordinate.latitude.description
+                                longitude = viewModel.location.coordinate.longitude.description
+                            }
+                        })
+                        if viewModel.isLoading {
+                            ProgressView()
                         }
-                    })
+                    }
                     VStack(alignment: HorizontalAlignment.leading) {
                         Spacer()
                         VStack {
@@ -75,7 +80,7 @@ struct ContentView: View {
                 })
                 ToolbarItem(placement: .topBarLeading,
                             content: {
-                    Button("다크모드", action: {
+                    Button(colorSchemeManager.colorScheme == .light ? "다크 모드" : "라이트 모드", action: {
                         colorSchemeManager.toggle()
                     })
                 })
