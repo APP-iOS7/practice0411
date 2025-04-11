@@ -53,11 +53,10 @@ class LocationService: NSObject {
 extension LocationService: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        guard abs(location.timestamp.timeIntervalSinceNow) < 3600 else { return }
         
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        
+        locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

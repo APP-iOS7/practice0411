@@ -41,12 +41,14 @@ class WeatherService {
             let currentWeather = weather.currentWeather
             
             // WeatherData 데이터로 반환
-            return WeatherData(temperature: currentWeather.temperature.value,
+            let weatherData = WeatherData(temperature: currentWeather.temperature.value,
                                description: currentWeather.condition.description,
                                humidity: currentWeather.humidity,
-                               windSpeed: currentWeather.wind.speed)
+                               windSpeed: currentWeather.wind.speed.value)
+            return weatherData
         } catch {
             print("🔴 날씨 정보 가져오기 실패: \(error.localizedDescription)")
             throw WeatherServiceError.failedToFetchWeather
         }
+    }
 }
