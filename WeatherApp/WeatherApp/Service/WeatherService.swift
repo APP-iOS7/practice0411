@@ -14,7 +14,7 @@ class WeatherService {
         do {
             let weatherService = WeatherKit.WeatherService()
             let weather = try await weatherService.weather(for: location).currentWeather
-            return WeatherData(temperature: weather.temperature.value, description: weather.condition.description, humidity: weather.humidity, windSpeed: weather.wind.speed.value)
+            return WeatherData(temperature: weather.temperature.value, description: weather.condition.description, humidity: weather.humidity, windSpeed: weather.wind.speed.value, symbolName: weather.symbolName)
         } catch {
             throw WeatherError.permissionDenied
         }

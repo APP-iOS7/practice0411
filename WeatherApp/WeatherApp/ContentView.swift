@@ -19,7 +19,10 @@ struct ContentView: View {
             List {
                 Section("날씨") {
                     Text("현재 온도: \(String(format: "%.1f", viewModel.weather?.temperature ?? 0.0)) °C")
-                    Text("날씨 설명: \(viewModel.weather?.description ?? "")")
+                    HStack {
+                        Text("날씨 설명: \(viewModel.weather?.description ?? "")")
+                        Image(systemName: viewModel.weather?.symbolName ?? "")
+                    }
                     Text("현재 습도: \(String(format: "%.1f", viewModel.weather?.humidity ?? 0.0)) %")
                     Text("현재 풍속: \(String(format: "%.1f", viewModel.weather?.windSpeed ?? 0.0)) m/s")
                 }

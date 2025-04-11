@@ -12,6 +12,7 @@ struct WeatherData: Codable {
     let description: String
     let humidity: Double
     let windSpeed: Double
+    let symbolName: String
     
-    static let empty = WeatherData(temperature: 0.0, description: "", humidity: 0.0, windSpeed: 0.0)
+    static let empty = WeatherData(temperature: 0.0, description: "", humidity: 0.0, windSpeed: 0.0, symbolName: "")
 }
