@@ -6,21 +6,31 @@
 //
 
 import SwiftUI
-import CoreLocation
+import Combine
+import WeatherKit
 
 struct ContentView: View {
-    private let locationManager = LocationDataManager.shared.locationManager
+    @StateObject private var viewModel = WeatherViewModel()
     
+    private let locationService = LocationService.shared
+
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            if let weather = viewModel.weather {
+                Text("기온: \(weather.temperature)")
+                Text("습도: \(weather.humidity)")
+                Text("풍속: \(weather.windSpeed)")
+                Text("\(weather.description)")
+            } else {
+                Text("날씨 정보 로딩중...")
+            }
         }
         .padding()
         .onAppear {
-            locationManager.requestWhenInUseAuthorization()
+            locationService.locationManager.requestWhenInUseAuthorization()
+            if let location = locationService.currentLocation {
+                viewModel.fetchWeather(location: location)
+            }
         }
     }
 }

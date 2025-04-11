@@ -6,11 +6,11 @@
 //
 
 import CoreLocation
-import WeatherKit
 
-final class LocationDataManager: NSObject, CLLocationManagerDelegate {
-    static let shared: LocationDataManager = LocationDataManager()
+final class LocationService: NSObject, CLLocationManagerDelegate {
+    static let shared: LocationService = LocationService()
     var locationManager: CLLocationManager = CLLocationManager()
+    var currentLocation: CLLocation?
     
     private override init() {
         super.init()
@@ -38,6 +38,7 @@ final class LocationDataManager: NSObject, CLLocationManagerDelegate {
         }
         
         debugPrint(location.coordinate.latitude, location.coordinate.longitude)
+        currentLocation = location
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
