@@ -57,6 +57,17 @@ final class TodoModelManager {
         }
     }
     
+    func updateAllTodo(_ todos: [Todo]) {
+        do {
+            for todo in todos {
+                modelContext.insert(todo)
+            }
+            try modelContext.save()
+        } catch {
+            print("UPDATE ALL ERROR: \(error)")
+        }
+    }
+    
     func deleteTodo(_ todo: Todo) {
         do {
             modelContext.delete(todo)

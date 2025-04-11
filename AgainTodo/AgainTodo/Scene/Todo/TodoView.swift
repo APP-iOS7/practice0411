@@ -18,9 +18,10 @@ struct TodoView: View {
                                         .frame(width: 30, height: 30)
                                         .toggleStyle(.button)
                                         .background(.clear)
-                                        .onChange(of: viewModel.todos[index].isDone) {
-                                            viewModel.updateTodo(viewModel.todos[index])
-                                        }
+//Combine사용으로 필요 없는 부분
+//                                        .onChange(of: viewModel.todos[index].isDone) {
+//                                            viewModel.updateTodo(viewModel.todos[index])
+//                                        }
                                         
                                 }
                                 TodoItemView(todoItem: viewModel.todos[index])
@@ -55,9 +56,6 @@ struct TodoView: View {
             }
         }
         .sheet(isPresented: $viewModel.showAddTodoView, onDismiss: {viewModel.fetchTodos()}, content: { AddTodoView() })
-        .onAppear() {
-            viewModel.fetchTodos()
-        }
     }
     
 }

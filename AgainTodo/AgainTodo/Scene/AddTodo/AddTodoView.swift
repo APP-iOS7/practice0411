@@ -49,7 +49,9 @@ struct AddTodoView: View {
                             viewModel.saveTodo()
                             dismiss()
                         },
-                        label: {Text("저장하기").foregroundStyle(.black)})
+                        label: {Text("저장하기").foregroundStyle(viewModel.isFormValid ? .black : .gray.opacity(0.5))}
+                    )
+                    .disabled(!viewModel.isFormValid)
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {

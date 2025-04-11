@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 
 final class AddTodoViewModel: ObservableObject {
@@ -15,6 +16,16 @@ final class AddTodoViewModel: ObservableObject {
     @Published var detail: String = ""
     @Published var showDatePicker: Bool = false
     @Published var date: Date = Date()
+    @Published var isFormValid: Bool = false
+    
+    init() {
+        Publishers.CombineLatest($title, $detail)
+            .map {
+                print("\($0) , \($1)")
+                print(!$0.trimmingCharacters(in: .whitespaces).isEmpty && !$1.trimmingCharacters(in: .whitespaces).isEmpty)
+                return !$0.trimmingCharacters(in: .whitespaces).isEmpty && !$1.trimmingCharacters(in: .whitespaces).isEmpty }
+            .assign(to: &$isFormValid)
+    }
     
     func saveTodo() {
         let weatherItem = Weather(weather: "test", icon: "cloud.rain", location: "test location")
