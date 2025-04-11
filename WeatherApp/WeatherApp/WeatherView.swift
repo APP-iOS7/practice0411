@@ -29,8 +29,12 @@ struct WeatherView: View {
                         
                     }
                 }
+                
+                
             }
             .padding(20)
+            
+            LoadingView()
         }
     }
 }
@@ -46,12 +50,12 @@ struct WeatherInfoView: View {
                 // 온도 정보
                 Text("\(Int(weather.temperature))°C")
                     .font(.system(size: 50, weight: .bold))
-                    .foregroundColor(Color(hex: "#ffffff"))
+                    .foregroundStyle(Color(hex: "#FFFFFF"))
                 
                 // 날씨 설명
                 Text(weather.description)
                     .font(.title)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(Color(hex: "#FFFFFF"))
                 
                 Divider()
                 
@@ -79,12 +83,12 @@ struct WeatherInfoView: View {
         .padding()
         .background(
             LinearGradient(
-            colors: [
-                Color(hex: "#CCE0FF"),
-                Color(hex: "#0120E0")
-            ],
-            startPoint: .top,
-            endPoint: .bottomTrailing))
+                colors: [
+                    Color(hex: "#CCE0FF"),
+                    Color(hex: "#0120E0"),
+                ],
+                startPoint: .top,
+                endPoint: .bottomTrailing))
         .cornerRadius(12)
     }
     
@@ -117,10 +121,10 @@ struct RefreshButton: View {
         Button(action: action) {
             Label("새로고침", systemImage: "arrow.clockwise")
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(Color(hex: "#FFFFFF"))
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(Color.blue)
+                .background(Color(hex: "#498DF2"))
                 .cornerRadius(10)
         }
         .disabled(isLoading)
@@ -145,7 +149,7 @@ struct LoadingView: View {
                     .padding(.top, 10)
             }
             .padding(20)
-            .background(Color.gray.opacity(0.8))
+//            .background(Color.gray.opacity(0.8))
             .cornerRadius(10)
         }
     }
