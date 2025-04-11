@@ -11,5 +11,5 @@ import CoreLocation
 
 extension CLLocation {
     // 기본 좌표 - I-Town CITY HALL
-    static let defaultLocation = CLLocation(latitude: 126.7052062, longitude: 37.4562557)
+    static let defaultLocation = CLLocation(latitude: 37.4562557 , longitude: 126.7052062)
 }

@@ -45,19 +45,20 @@ class RealtimeWeatherViewModel: NSObject, ObservableObject, @unchecked Sendable 
         }
     }
     
+    @MainActor // <--- 함수 선언 앞에 추가!
     func getWeather() async {
-        DispatchQueue.main.async {
-            self.isLoading = true
-            do {self.isLoading = false}
-        }
+        // 이 함수는 이제 @MainActor에서 실행됨
+        self.isLoading = true
+        defer { self.isLoading = false }
         
         do {
-            try await self.weather = weatherService.fetchWeather(for: location) // update Occur here
-        }
-        catch {
+            let newWeather = try await weatherService.fetchWeather(for: location)
+            // await 이후에도 MainActor로 돌아와서 실행됨
+            self.weather = newWeather // ✅ 메인 스레드에서 안전하게 업데이트됨!
+        } catch {
             print("Error: \(error)")
+            // self.error = error // 메인 스레드에서 안전
         }
-        
     }
     
 }
@@ -99,12 +100,13 @@ extension RealtimeWeatherViewModel: CLLocationManagerDelegate  {
     
     // 위치 정보 업데이트 시 호출됨 (필수 구현)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print(self.location)
         // locations 배열에는 최신 위치 정보가 들어 있습니다.
         if let newLocation = locations.first {
             print("✅ Received location: \(newLocation)")
             // 여기서 self.location = newLocation 같은 로직을 수행할 수 있습니다.
             // 예를 들어, 특정 거리 이상 차이날 때만 업데이트 하려면:
-            if location.distance(from: newLocation) > 30000 { // 30km 이상 차이나면 업데이트 (예시)
+            if location.distance(from: newLocation) > 10000 { // 30km 이상 차이나면 업데이트 (예시)
                 self.location = newLocation
                 // 위치가 업데이트 되었으므로 날씨 정보도 다시 가져올 수 있습니다.
                 Task {
@@ -113,11 +115,6 @@ extension RealtimeWeatherViewModel: CLLocationManagerDelegate  {
             } else {
                 print("Location difference is not significant enough to update.")
                 // 처음 위치를 받는 경우이거나, getWeather를 아직 호출 안했다면 여기서 호출할 수도 있습니다.
-                if self.weather == nil { // 아직 날씨 정보가 없다면 가져오기
-                    Task {
-                        await getWeather()
-                    }
-                }
             }
         }
     }
