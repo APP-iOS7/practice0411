@@ -15,9 +15,16 @@ struct TodoDetailView: View {
         Text(todo.detail)
         Text(todo.deadline?.description ?? "")
         Text(todo.isDone ? "Done" : "Not Done")
+        Text(todo.weather?.uvCategory.description ?? "")
+        Text("\(String(describing: todo.weather?.maxTemp))")
+        Text("\(String(describing: todo.weather?.minTemp))")
+        Text(todo.weather?.precipitationChance.description ?? "")
+        Image(systemName: todo.weather?.icon ?? "")
     }
 }
 
 #Preview {
     TodoDetailView(todo: Todo.empty())
 }
+
+// 대체로 흐림, 0프로, 14.99도, 10.40도 4-16일
