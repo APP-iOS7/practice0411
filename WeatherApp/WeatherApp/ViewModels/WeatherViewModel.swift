@@ -23,9 +23,16 @@ class WeatherViewModel: ObservableObject {
         }
         
         do {
-            let data = try await myWeatherService.fetchWeather(for: location)
-            DispatchQueue.main.async { [weak self] in
-                self?.weather = data
+            if !isLoading {
+                await myWeatherService.locationManager.startUpdatingLocation()
+                
+                let data = try await myWeatherService.fetchWeather(for: location)
+                myWeatherService.locationManager.startUpdatingLocation()
+                DispatchQueue.main.async { [weak self] in
+                    self?.weather = data
+                    //                    self?.isLoading = false
+                }
+                print("날씨 정보: \(data)")
             }
         } catch {
             print("날씨 정보를 가져오는 중 오류 발생: \(error)")

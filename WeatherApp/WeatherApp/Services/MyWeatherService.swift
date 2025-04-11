@@ -75,5 +75,6 @@ class MyWeatherService: NSObject, CLLocationManagerDelegate {
         self.currentLocation = lastLocation
         
         print("위치 업데이트: \(lastLocation.coordinate.latitude), \(lastLocation.coordinate.longitude)")
+        locationManager.stopUpdatingLocation()
     }
 }
