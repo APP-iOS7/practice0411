@@ -36,7 +36,6 @@ class WeatherService {
     
     func fetchWeather(for location: CLLocation) async throws -> WeatherData {
         do {
-            
             let weather = try await weatherService.weather(for: location)
             let currentWeather = weather.currentWeather
             

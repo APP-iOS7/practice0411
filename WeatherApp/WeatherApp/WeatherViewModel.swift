@@ -11,14 +11,15 @@ import SwiftUI
 // TODO: ViewModel 작업
 
 class WeatherViewModel: ObservableObject {
+    // 서비스
+    private var weatherService = WeatherService.shared
+    private var locationService = LocationService.shared
+    
     @Published var weather: WeatherData?
     @Published var error: Error?
     @Published var isLoading = false
     @Published var location: CLLocation?
     
-    // 서비스
-    private var locationService = LocationService.shared
-    private var weatherService = WeatherService.shared
     
     init() {
         setupLocationService()

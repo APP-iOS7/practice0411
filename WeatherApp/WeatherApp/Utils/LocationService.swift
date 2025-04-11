@@ -11,6 +11,7 @@ import CoreLocation
 // MARK: - 위치 서비스 클래스
 class LocationService: NSObject, ObservableObject {
     
+    static let shared = LocationService()
     private let locationManager = CLLocationManager()
     
     @Published var location: CLLocation?

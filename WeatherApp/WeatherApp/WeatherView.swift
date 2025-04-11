@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 // TODO: ViewModel 생성 후 View 연결
-struct ContentView: View {
+struct WeatherView: View {
     
     @State private var weather: WeatherData?
     @State private var isLoading = false
@@ -22,7 +22,7 @@ struct ContentView: View {
             
             VStack(spacing: 20) {
                 
-                WeatherInfoView(weather: weather ?? WeatherData(temperature: 0, description: "맑음", humidity: 0, windSpeed: Measurement(value: 0, unit: .metersPerSecond)))
+                WeatherInfoView(weather: weather ?? WeatherData(temperature: 0, description: "맑음", humidity: 0, windSpeed: 0))
                 
                 RefreshButton(isLoading: isLoading) {
                     Task {
@@ -68,7 +68,7 @@ struct WeatherInfoView: View {
                     WeatherDataItem(
                         iconName: "wind",
                         title: "풍속",
-                        value: "\(Int(weather.windSpeed.value)) \(weather.windSpeed.unit.symbol)"
+                        value: "\(Int(weather.windSpeed))m/s"
                     )
                 }
                 .padding(.top, 10)
@@ -153,5 +153,5 @@ struct LoadingView: View {
 
 
 #Preview {
-    ContentView()
+    WeatherView()
 }
