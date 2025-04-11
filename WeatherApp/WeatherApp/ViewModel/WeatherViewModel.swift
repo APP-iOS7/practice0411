@@ -28,6 +28,18 @@ class WeatherViewModel: ObservableObject {
         }
     }
     
+    func fetchCustomLocationWeather(_ latitude: String, _ longitude: String) async {
+        do {
+            isLoading = true
+            let customLocation = CLLocationCoordinate2D(latitude: Double(latitude) ?? 0.0, longitude: Double(longitude) ?? 0.0)
+            location = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
+            weather = try await WeatherService.fetchWeather(for: self.location)
+            isLoading = false
+        } catch {
+            debugPrint("날씨 정보 가져오기 실패: \(error)")
+        }
+    }
+    
     func resetWeather() {
         weather = WeatherData.empty
     }

@@ -11,9 +11,6 @@ import CoreLocation
 struct ContentView: View {
     @StateObject var viewModel: WeatherViewModel = WeatherViewModel()
     
-    let locationManager = CLLocationManager()
-    var currentLocation: CLLocation?
-    
     @State private var latitude: String = ""
     @State private var longitude: String = ""
     
@@ -42,7 +39,7 @@ struct ContentView: View {
                     }
                     Button("확인", action: {
                         Task {
-                            await viewModel.fetchWeather()
+                            await viewModel.fetchCustomLocationWeather(latitude, longitude)
                         }
                     })
                 }
