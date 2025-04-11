@@ -9,6 +9,9 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
+    
+    @EnvironmentObject var colorSchemeManager: ColorSchemeManager
+
     @StateObject var viewModel: WeatherViewModel = WeatherViewModel()
     
     @State private var latitude: String = ""
@@ -73,7 +76,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .topBarLeading,
                             content: {
                     Button("다크모드", action: {
-//                        TODO: 다크모드
+                        colorSchemeManager.toggle()
                     })
                 })
             })
