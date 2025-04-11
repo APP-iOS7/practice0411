@@ -7,55 +7,100 @@
 
 import SwiftUI
 import SwiftData
+import CoreLocation
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
-    var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+  @Environment(\.modelContext) private var modelContext
+  @StateObject private var weatherViewModel = WeatherViewModel()
+  @StateObject private var locationService = LocationService()
+  
+  var body: some View {
+    VStack {
+      // 헤더 섹션
+      Text("TodayWeather")
+        .font(.headline)
+        .fontWeight(.bold)
+        .padding()
+      
+      // 로딩중 or 날씨 데이터 없는 경우
+      if weatherViewModel.isLoading {
+        ProgressView()
+          .scaleEffect(2.0)
+          .padding()
+        Text("날씨 정보를 불러오는 중...")
+          .padding()
+      }
+        // 날씨 정보가 있는 경우
+      else if let weather = weatherViewModel.weatherData {
+        // 날씨 정보가 있는 경우
+        VStack(spacing: 20) {
+          Text("\(Int(weather.temperature))°C")
+            .font(.largeTitle)
+          
+          Text(weather.description)
+            .font(.title2)
+          
+          HStack(spacing: 40) {
+            VStack {
+              Text("습도")
+                .font(.headline)
+              Text("\(Int(weather.humidity))%")
+                .font(.title3)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            
+            VStack {
+              Text("풍속")
+                .font(.headline)
+              Text("\(Int(weather.windSpeed)) m/s")
+                .font(.title3)
             }
-        } detail: {
-            Text("Select an item")
+          }
+          .padding()
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+        .padding()
+      } else {
+        // 날씨 데이터가 없는 경우
+        Text("날씨 정보가 없습니다")
+          .font(.title)
+          .padding()
+      }
+      
+      // 새로고침 버튼
+      Button {
+        Task {
+          await fetchWeatherData()
         }
+      } label: {
+        Text("날씨 정보 새로고침")
+          .font(.headline)
+          .foregroundStyle(.white)
+          .padding()
+          .background(Color.blue)
+          .clipShape(RoundedRectangle(cornerRadius: 10))
+      }
+      .padding()
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+    .padding()
+    .onAppear {
+      // 위치 권한 요청
+      locationService.requestLocationPermission()
+    }
+    .onChange(of: locationService.currentLocation) { _, newLocation in
+      if let location = newLocation {
+        weatherViewModel.setLocation(location)
+        Task {
+          await fetchWeatherData()
         }
+      }
     }
+  }
+  
+  // 날씨 데이터 가져오기
+  private func fetchWeatherData() async {
+    await weatherViewModel.fetchWeather()
+  }
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+  ContentView()
 }
