@@ -31,27 +31,39 @@ struct ContentView: View {
                 }
                 Spacer()
                 
-                HStack {
-                    Text("습도: \(viewModel.weather.humdity, specifier: "%.1f") %")
-                        .font(.title)
-                }
+                Text("습도: \(viewModel.weather.humdity, specifier: "%.1f") %")
+                    .font(.title)
                 Spacer()
                 
-                HStack {
-                    Text("풍속: \(viewModel.weather.windSpeed, specifier: "%.1f") m/s")
-                        .font(.title)
-                }
+                Text("풍속: \(viewModel.weather.windSpeed, specifier: "%.1f") m/s")
+                    .font(.title)
                 Spacer()
                 
-                HStack {
-                    Text("추천 옷차림: \(viewModel.weather.clothes)")
-                        .font(.title)
-                }
+                Text("추천 옷차림: \(viewModel.weather.clothes)")
+                    .font(.title)
                 Spacer()
+                
+                Button(action: {
+                    Task {
+                        await viewModel.checkWeather()
+                    }
+                }, label: {
+                    Image(systemName: "arrow.clockwise")
+                        .imageScale(.large)
+                        .font(.largeTitle)
+                })
+                
+                
+                Spacer()
+                
+            }
+            .task {
+                await viewModel.checkWeather()
             }
         }
     }
 }
+
 
 #Preview {
     ContentView()
