@@ -15,9 +15,9 @@ final class Todo: Identifiable, Equatable, ObservableObject {
     var detail: String
     var deadline: Date?
     var isDone: Bool
-    var weather: Weather?
+    var weather: Weathers?
     
-    init(title: String = "", detail: String = "", deadline: Date? = nil, isDone: Bool = false, weather: Weather? = nil) {
+    init(title: String = "", detail: String = "", deadline: Date? = nil, isDone: Bool = false, weather: Weathers? = nil) {
         self.id = UUID()
         self.title = title
         self.detail = detail

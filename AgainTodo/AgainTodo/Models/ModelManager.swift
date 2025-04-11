@@ -11,7 +11,7 @@ final class TodoModelManager {
     
     private init() {
         modelContainer = try! ModelContainer.init(
-            for: Schema([Todo.self, Weather.self]),
+            for: Schema([Todo.self, Weathers.self]),
             configurations: ModelConfiguration(isStoredInMemoryOnly: false)
         )
         modelContext = ModelContext(modelContainer)

@@ -12,6 +12,7 @@ import Combine
 final class AddTodoViewModel: ObservableObject {
     private var modelManager: TodoModelManager = .shared
     private var locationManager = LocationManager()
+    private var weatherManager = WeatherManager()
     
     @Published var title: String = ""
     @Published var detail: String = ""
@@ -28,10 +29,19 @@ final class AddTodoViewModel: ObservableObject {
     
     func saveTodo() {
         locationManager.requestLocation()
-        let weatherItem = Weather(weather: "test", icon: "cloud.rain", location: "test location")
-        let todoItem = Todo(title: title, detail: detail, deadline: showDatePicker ? date : nil, weather: weatherItem)
-        
-        modelManager.insertTodo(todoItem)
+        if let location = locationManager.location {
+            Task{
+                var weatherModel : Weathers?
+                if showDatePicker {
+                    let result = await weatherManager.getDayWeather(day: date, for: location)
+                    weatherModel = Weathers.makeModel(data: result!, location: location)
+                }
+                else { weatherModel = nil}
+                let todoItem = Todo(title: title, detail: detail, deadline: showDatePicker ? date : nil, weather: showDatePicker ? weatherModel : nil)
+                
+                modelManager.insertTodo(todoItem)
+            }
+        }
         
     }
 }

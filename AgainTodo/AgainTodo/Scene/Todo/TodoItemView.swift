@@ -21,6 +21,7 @@ struct TodoItemView: View {
                                 .font(.system(size: titleFontSize, weight: .bold))
                                 .kerning(textKerning)
                                 .fixedSize(horizontal: false, vertical: true)
+                                .lineLimit(1)
                             
                             Text(todoItem.detail)
                                 .font(.system(size: subtitleFontSize))
