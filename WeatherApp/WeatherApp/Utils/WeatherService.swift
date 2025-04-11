@@ -1,0 +1,29 @@
+//
+//  WeatherService.swift
+//  WeatherApp
+//
+//  Created by KimJunsoo on 4/11/25.
+//
+
+import Foundation
+import WeatherKit
+import CoreLocation
+
+class WeatherService {
+    
+    static let shared = WeatherService()
+    
+    private let weatherService = WeatherKit.WeatherService()
+    
+    func fetchWeather(for location: CLLocation) async throws -> WeatherData {
+        
+        let weather = try await weatherService.weather(for: location)
+            
+        let currentWeather = weather.currentWeather
+        
+        return WeatherData(temperature: currentWeather.temperature.value,
+                           description: currentWeather.condition.description,
+                           humidity: currentWeather.humidity,
+                           windSpeed: currentWeather.wind.speed)
+    }
+}

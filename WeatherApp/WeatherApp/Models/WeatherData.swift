@@ -12,5 +12,5 @@ struct WeatherData: Codable {
     let temperature: Double // 섭씨 온도
     let description: String // 날씨 설명
     let humidity: Double // 습도
-    let windSpped: Double // 풍속
+    let windSpeed: Measurement<UnitSpeed> // 풍속
 }
