@@ -5,18 +5,30 @@
 //  Created by 멘태 on 4/11/25.
 //
 
+import Combine
 import CoreLocation
 
-final class LocationService: NSObject, CLLocationManagerDelegate {
+final class LocationService: NSObject {
     static let shared: LocationService = LocationService()
     var locationManager: CLLocationManager = CLLocationManager()
     var currentLocation: CLLocation?
+    
+    private var subject = PassthroughSubject<CLLocation, Never>()
+    var locationPublisher: AnyPublisher<CLLocation, Never> {
+        subject.eraseToAnyPublisher()
+    }
     
     private override init() {
         super.init()
         locationManager.delegate = self
     }
     
+    func send(location: CLLocation) {
+        subject.send(location)
+    }
+}
+
+extension LocationService: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse:
@@ -38,7 +50,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         }
         
         debugPrint(location.coordinate.latitude, location.coordinate.longitude)
-        currentLocation = location
+        subject.send(location)
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {

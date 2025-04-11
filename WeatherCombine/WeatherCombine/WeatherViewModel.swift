@@ -15,20 +15,20 @@ final class WeatherViewModel: ObservableObject {
     @Published var error: Error?
     
     var cancellables = Set<AnyCancellable>()
-    
-    private var subject = PassthroughSubject<CLLocation, Error>()
+    var locationPulisher = LocationService.shared.locationPublisher
     
     init(weather: WeatherData? = nil, isLoading: Bool = false, error: Error? = nil) {
         self.weather = weather
         self.isLoading = isLoading
         self.error = error
         
-        subject
+        self.locationPulisher
             .flatMap { location in
                 Future<CurrentWeather, Error> { promise in
                     Task {
                         do {
                             let weather = try await WeatherService().weather(for: location).currentWeather
+                            debugPrint(weather)
                             promise(.success(weather))
                         } catch {
                             promise(.failure(error))
@@ -45,9 +45,5 @@ final class WeatherViewModel: ObservableObject {
                 self?.weather = WeatherData(weather: weather)
             }
             .store(in: &cancellables)
-    }
-    
-    func fetchWeather(location: CLLocation) {
-        subject.send(location)
     }
 }
