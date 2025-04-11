@@ -25,6 +25,7 @@ struct TodoItemView: View {
                             Text(todoItem.detail)
                                 .font(.system(size: subtitleFontSize))
                                 .fixedSize(horizontal: false, vertical: true)
+                                .lineLimit(1)
                         }
                         Spacer()
                     }
@@ -61,8 +62,10 @@ struct TodoItemView: View {
                 .frame(height: 50)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        
         }
         .frame(height: 50)
+//        .background(todoItem.isDone ? .gray : .clear)
     }
 }
 

@@ -44,7 +44,12 @@ struct AddTodoView: View {
             .padding()
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {viewModel.saveTodo()},label: {Text("저장하기").foregroundStyle(.black)})
+                    Button(
+                        action: {
+                            viewModel.saveTodo()
+                            dismiss()
+                        },
+                        label: {Text("저장하기").foregroundStyle(.black)})
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {

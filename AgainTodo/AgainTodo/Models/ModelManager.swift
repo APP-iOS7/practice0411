@@ -40,10 +40,20 @@ final class TodoModelManager {
     
     func updateTodo(_ todo: Todo) {
         do {
+            guard let todos = try modelContext.fetch(FetchDescriptor<Todo>()).first(where: { $0.id == todo.id })
+            else {
+                return
+            }
+            
+            todos.title = todo.title
+            todos.detail = todo.detail
+            todos.deadline = todo.deadline
+            todos.weather = todo.weather
+            todos.isDone = todo.isDone
+            
             try modelContext.save()
-        }
-        catch {
-            print("SAVE ERROR: \(error)")
+        } catch {
+            print("UPDATE ERROR: \(error)")
         }
     }
     

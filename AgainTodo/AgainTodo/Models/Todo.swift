@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Todo: Identifiable {
+final class Todo: Identifiable, Equatable, ObservableObject {
     var id: UUID
     var title: String
     var detail: String
