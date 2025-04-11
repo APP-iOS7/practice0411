@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
-
+import CoreLocation
 
 struct ContentView: View {
+    private let locationManager = LocationDataManager.shared.locationManager
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -17,6 +19,9 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        .onAppear {
+            locationManager.requestWhenInUseAuthorization()
+        }
     }
 }
 
