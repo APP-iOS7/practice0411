@@ -6,56 +6,79 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct ContentView: View {
-    
-    //@StateObject private var viewModel = WeatherViewModel()
+    @StateObject private var viewModel = WeatherViewModel()
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    HStack {
-                        /*
-                        TextField($viewModel.location, text: "dd")
-                         */
-                    }
-                    HStack {
-                        Text("🌡️")
-                        Text("온도")
-                        Spacer()
-                        Text("7")
-                    }
-                    HStack {
-                        Text("ℹ")
-                        Text("정보")
-                        Spacer()
-                        Text("")
-                    }
-                    HStack {
-                        Text("🥵")
-                        Text("습도")
-                        Spacer()
-                        Text("17%")
-                    }
-                    HStack {
-                        Text("💨")
-                        Text("풍속")
-                        Spacer()
-                        Text("7ms")
-                    }
-                }
-            }.navigationTitle("Weather")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            print("버튼 눌림!")
-                        }) {
-                            Image(systemName: "arrow.clockwise")
+                    TextField("위치 입력 (예: 서울)", text: $viewModel.location)
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
+                    
+                    Button("날씨 가져오기") {
+                        Task {
+                            await viewModel.fetchWeather()
                         }
                     }
                 }
+                
+                if viewModel.isLoading {
+                    ProgressView("날씨 정보를 불러오는 중...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .multilineTextAlignment(.center)
+                }
+                
+                if let weather = viewModel.weather {
+                    Section {
+                        HStack {
+                            Text("🌡️")
+                            Text("온도")
+                            Spacer()
+                            Text("\(weather.temperature, specifier: "%.1f")℃")
+                        }
+                        HStack {
+                            Text("ℹ️")
+                            Text("설명")
+                            Spacer()
+                            Text(weather.description)
+                        }
+                        HStack {
+                            Text("🥵")
+                            Text("습도")
+                            Spacer()
+                            Text("\(Int(weather.humidity))%")
+                        }
+                        HStack {
+                            Text("💨")
+                            Text("풍속")
+                            Spacer()
+                            Text("\(weather.windSpeed, specifier: "%.1f") m/s")
+                        }
+                    }
+                }
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Section {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .navigationTitle("Weather")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        Task {
+                            await viewModel.fetchWeather()
+                        }
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
+            }
         }
     }
 }
