@@ -17,6 +17,13 @@ struct ContentView: View {
     @State private var latitude: String = ""
     @State private var longitude: String = ""
     
+    @FocusState private var focusedField: Field?
+    
+    enum Field {
+        case latitude
+        case longitude
+    }
+    
     var body: some View {
         NavigationStack{
             List {
@@ -43,22 +50,22 @@ struct ContentView: View {
                         }
                     }
                     VStack(alignment: HorizontalAlignment.leading) {
-                        Spacer()
                         VStack {
                             TextField("위도(-90 ~ 90)      Ex) 37.33473020", text: $latitude)
+                                .keyboardType(.decimalPad)
+
                             Divider()
                             TextField("경도(-180 ~ 180)   Ex) 122.00891890", text: $longitude)
+                                .keyboardType(.decimalPad)
+
                         }
-                        Spacer()
-                        Spacer()
-                        Button("위치 직접 입력", action: {
-                            Task {
-                                viewModel.error = nil
-                                await viewModel.fetchCustomLocationWeather(latitude, longitude)
-                            }
-                        })
-                        Spacer()
                     }
+                    Button("위치 직접 입력", action: {
+                        Task {
+                            viewModel.error = nil
+                            await viewModel.fetchCustomLocationWeather(latitude, longitude)
+                        }
+                    })
                 }
                 Section {
                     Text(viewModel.error?.localizedDescription ?? "")
@@ -68,6 +75,15 @@ struct ContentView: View {
             }
             
             .navigationTitle("Weather App")
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("완료") {
+                        focusedField = nil
+                        hideKeyboard()
+                    }
+                }
+            }
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing,
                             content: {
@@ -87,6 +103,13 @@ struct ContentView: View {
             })
         }
         
+    }
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
     }
 }
 
