@@ -20,8 +20,6 @@ class LocationService: NSObject {
 
     func requestLocation() {
         locationManager.requestLocation()
-        debugPrint("\(String(describing: locationManager.location?.coordinate.latitude))")
-        debugPrint("\(String(describing: locationManager.location?.coordinate.longitude))")
     }
     
     func setCurrentCLLocation() -> CLLocation {

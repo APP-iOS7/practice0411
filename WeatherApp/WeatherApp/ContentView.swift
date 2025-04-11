@@ -16,10 +16,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack{
-            VStack(alignment: .leading){
-                Button("새로고침", action: {
-                    viewModel.resetWeather()
-                })
+            List {
                 Section("날씨") {
                     Text("현재 온도: \(String(format: "%.1f", viewModel.weather?.temperature ?? 0.0)) °C")
                     Text("날씨 설명: \(viewModel.weather?.description ?? "")")
@@ -32,22 +29,49 @@ struct ContentView: View {
                             await viewModel.fetchWeather()
                         }
                     })
-                    Text("위치 직접 입력")
-                    HStack {
-                        TextField("위도", text: $latitude)
-                        TextField("경도", text: $longitude)
-                    }
-                    Button("확인", action: {
-                        Task {
-                            await viewModel.fetchCustomLocationWeather(latitude, longitude)
+                    VStack(alignment: HorizontalAlignment.leading) {
+                        Spacer()
+                        Text("위치 직접 입력")
+                        Spacer()
+                        VStack {
+                            TextField("위도                    Example) 37.33473020", text: $latitude)
+                            TextField("경도                    Example) 122.00891890", text: $longitude)
                         }
-                    })
+                        Spacer()
+                        Button("확인", action: {
+                            Task {
+                                viewModel.error = nil
+                                await viewModel.fetchCustomLocationWeather(latitude, longitude)
+                            }
+                        })
+                        Spacer()
+                    }
                 }
+                Section {
+                    Text(viewModel.error?.localizedDescription ?? "")
+                        .listRowBackground(Color.clear)
+                }
+                .foregroundStyle(.red)
                 //                ProgressView()
             }
-            .padding()
+            
             .navigationTitle("Weather App")
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing,
+                            content: {
+                    Button("새로고침", action: {
+                        viewModel.resetWeather()
+                    })
+                })
+                ToolbarItem(placement: .topBarLeading,
+                            content: {
+                    Button("다크모드", action: {
+//                        viewModel.resetWeather()
+                    })
+                })
+            })
         }
+        
     }
 }
 

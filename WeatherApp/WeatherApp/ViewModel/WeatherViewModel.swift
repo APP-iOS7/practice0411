@@ -7,6 +7,21 @@
 
 import Foundation
 import CoreLocation
+import WeatherKit
+
+enum APIError: Error, LocalizedError {
+    case permissionDenied
+    case unknownError
+    case typeDenied
+    
+    var errorDescription: String? {
+        switch self {
+        case .permissionDenied: return WeatherError.permissionDenied.errorDescription
+        case .unknownError: return "알 수 없는 오류"
+        case .typeDenied: return "올바른 타입이 아닙니다."
+        }
+    }
+}
 
 @MainActor
 class WeatherViewModel: ObservableObject {
@@ -30,13 +45,19 @@ class WeatherViewModel: ObservableObject {
     
     func fetchCustomLocationWeather(_ latitude: String, _ longitude: String) async {
         do {
+            guard let latDouble = Double(latitude), let longDouble = Double(longitude) else {
+                throw APIError.typeDenied
+            }
             isLoading = true
-            let customLocation = CLLocationCoordinate2D(latitude: Double(latitude) ?? 0.0, longitude: Double(longitude) ?? 0.0)
+            let customLocation = CLLocationCoordinate2D(latitude: latDouble, longitude: longDouble)
             location = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
             weather = try await WeatherService.fetchWeather(for: self.location)
             isLoading = false
+        } catch let error as APIError {
+            self.error = error
+            debugPrint(error.localizedDescription)
         } catch {
-            debugPrint("날씨 정보 가져오기 실패: \(error)")
+            debugPrint("예상치 못한 오류 \(error)")
         }
     }
     
