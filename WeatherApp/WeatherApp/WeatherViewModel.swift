@@ -9,6 +9,7 @@ import Foundation
 import CoreLocation
 import Combine
 
+@MainActor
 class WeatherViewModel: ObservableObject {
     @Published var location: String = ""
     @Published var weather: WeatherData?
