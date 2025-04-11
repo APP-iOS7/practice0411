@@ -24,6 +24,7 @@ class LocationService: NSObject {
         setupLocationManager()
     }
     
+    // 위치 매니저 초기 설정
     private func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -31,14 +32,17 @@ class LocationService: NSObject {
         
     }
     
+    // 위치 권한
     func requestWhenInUseAuthorization() {
         locationManager.requestWhenInUseAuthorization()
     }
     
+    // 위치 업데이트 시작
     func startUpdatingLocation() {
         locationManager.startUpdatingLocation()
     }
     
+    // 위치 업데이트 중지
     func stopUpdatingLocation() {
         locationManager.stopUpdatingLocation()
     }
@@ -51,4 +55,15 @@ class LocationService: NSObject {
 // MARK: - 위치 서비스 클래스 CLLocationManagerDelegate
 extension LocationService: CLLocationManagerDelegate {
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        
+    }
 }
