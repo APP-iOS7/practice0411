@@ -18,11 +18,18 @@ class WeatherViewModel: ObservableObject {
     func fetchWeather() async {
         do {
             isLoading = true
+            let locationService = LocationService()
+            locationService.requestLocation()
+            location = locationService.setCurrentCLLocation()
             weather = try await WeatherService.fetchWeather(for: self.location)
             isLoading = false
         } catch {
             debugPrint("날씨 정보 가져오기 실패: \(error)")
         }
+    }
+    
+    func resetWeather() {
+        weather = WeatherData.empty
     }
     
 }
