@@ -19,7 +19,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            if let weather = viewModel.weather, viewModel.error == nil {
+            if let weather = viewModel.weather, viewModel.error == nil, !viewModel.isLoading {
                 let temperature = String(format: "%.1f", weather.temperature)
                 let humidity = String(format: "%.1f", weather.humidity * 100)
                 let windSpeed = String(format: "%.1f", weather.windSpeed)
@@ -28,6 +28,10 @@ struct ContentView: View {
                 Text("습도: \(humidity) %")
                 Text("풍속: \(windSpeed) m/s")
                 Image(systemName: weather.description)
+            }
+            
+            if viewModel.isLoading {
+                ProgressView()
             }
             
             if let error = viewModel.error {
@@ -51,6 +55,8 @@ struct ContentView: View {
             }
             
             Button("커스텀 위치 사용") {
+                viewModel.isLoading = true
+                
                 guard let latitude = Double(latitude),
                       let longitude = Double(longitude) else { return }
                 
@@ -68,6 +74,11 @@ struct ContentView: View {
                 .frame(height: 50)
             
             Button("현재 위치 사용") {
+                viewModel.isLoading = true
+                
+                latitude = ""
+                longitude = ""
+                
                 locationService.locationManager.requestLocation()
             }
             .frame(maxWidth: .infinity)

@@ -43,6 +43,7 @@ final class WeatherViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] weather in
                 self?.weather = WeatherData(weather: weather)
+                self?.isLoading = false
             }
             .store(in: &cancellables)
     }
