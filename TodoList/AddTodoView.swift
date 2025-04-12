@@ -54,7 +54,7 @@ struct AddTodoView: View {
         .navigationTitle("Add Todo")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("cancel") {
+                Button("Cancel") {
                     dismiss()
                 }
             }

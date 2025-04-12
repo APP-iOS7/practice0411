@@ -16,6 +16,7 @@ final class TodoItem: Identifiable {
     var isCompleted: Bool = false
     var category: String?
     
+    
     init(
         title: String,
         id: UUID = UUID(),

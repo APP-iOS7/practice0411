@@ -19,28 +19,33 @@ struct TodoListView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing:0) {
+                TextField("Search TodoList...", text: $viewModel.searchText)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
                 HStack {
                     Text("Category:")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                Picker("Category", selection: $selectedCategoryFilter) {
-                    Text("All").tag(String?.none)
-                    ForEach(viewModel.uniqueCategories(), id: \.self) { category in
-                        Text(category).tag(String?.some(category))
+                        .font(.headline)
+                    Menu {
+                        Button("All") {
+                            viewModel.selectedCategory = nil
+                        }
+                        ForEach(viewModel.uniqueCategories(), id: \.self) { category in
+                            Button(category) {
+                                viewModel.selectedCategory = category
+                            }
+                        }
+                    } label: {
+                        Text(viewModel.selectedCategory ?? "All")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, 10)
                     }
+                    .padding()
                 }
-                .pickerStyle(MenuPickerStyle())
-                .onChange(of: selectedCategoryFilter) { oldValue, newValue in
-                    viewModel.selectedCategory = newValue
-                }
-                .onChange(of: viewModel.selectedCategory) { _, newValue in
-                    selectedCategoryFilter = newValue
-                }
-                .frame(maxWidth: 200, maxHeight: 50)
-                .clipped()
-            }
-                .padding(.horizontal)
                 List {
                     ForEach(viewModel.filteredItems) { item in
                         HStack {
@@ -48,7 +53,7 @@ struct TodoListView: View {
                                 viewModel.toggleCompleted(for: item)
                             }) {
                                 Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(item.isCompleted ? .blue : .gray)
+                                    .foregroundColor(item.isCompleted ? .indigo : .gray)
                             }
                             Text(item.title)
                                 .strikethrough(item.isCompleted)
@@ -61,10 +66,6 @@ struct TodoListView: View {
                                 Text(createdAt, style: .time)
                                     .font(.caption)
                                     .foregroundColor(.gray)
-                            } else {
-                                Text("No date")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
                             }
                         }
                     }
@@ -75,13 +76,15 @@ struct TodoListView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: AddTodoView(viewModel: viewModel)) {
-                        Label("Add", systemImage: "plus")
+                        Image(systemName: "plus")
+                            .foregroundStyle(.black)
                     }
                 }
             }
             .onAppear {
                 viewModel.fetchTodoItems()
             }
+            .background(Color.indigo.edgesIgnoringSafeArea(.all))
         }
     }
 }

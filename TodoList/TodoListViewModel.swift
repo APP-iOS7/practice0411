@@ -15,6 +15,7 @@ class TodoListViewModel: ObservableObject {
     @Published var isCompleted: Bool = false
     @Published var showCompleted: Bool = true
     @Published var selectedCategory: String? = nil
+    @Published var searchText: String = ""
     
     // Combine 구독 저장
     private var cancellables: Set<AnyCancellable> = []
@@ -42,8 +43,8 @@ class TodoListViewModel: ObservableObject {
     
     // MARK: 리스트 필터링 설정
     private func setupFiltering() {
-        Publishers.CombineLatest3($todoItems, $showCompleted, $selectedCategory) // publishers로 값이 바뀔 때마다 새로운 값을 방출해줌. CombineLatest3로 3개의 객체 값일 바뀔 때마다 최신 값을 결합해서 쌍으로 방출해줌.
-            .map { items, showCompleted, selectedCategory in // CombineLatest가 방출한 값을 받아서 변환해줌
+        Publishers.CombineLatest4($todoItems, $showCompleted, $selectedCategory, $searchText) // publishers로 값이 바뀔 때마다 새로운 값을 방출해줌. CombineLatest3로 3개의 객체 값일 바뀔 때마다 최신 값을 결합해서 쌍으로 방출해줌.
+            .map { items, showCompleted, selectedCategory, searchText in // CombineLatest가 방출한 값을 받아서 변환해줌
                 var filtered = items
                 if !showCompleted {
                     filtered = filtered.filter { !$0.isCompleted }
@@ -51,8 +52,16 @@ class TodoListViewModel: ObservableObject {
                 if let category = selectedCategory {
                     filtered = filtered.filter { $0.category == category }
                 }
+                if !searchText.isEmpty {
+                    filtered = filtered.filter {
+                        $0.title.localizedCaseInsensitiveContains(searchText) ||
+                                                ($0.category?.localizedCaseInsensitiveContains(searchText) ?? false)
+                    }
+                }
                 return filtered
             }
+            .debounce(for: .milliseconds(100), scheduler: DispatchQueue.main)
+            .removeDuplicates()
             .assign(to: \.filteredItems, on: self) // .map으로 나온 배열을 filteredItems에 할당
             .store(in: &cancellables) // TodoListViewModel이 해제 될 떄 구독도 자동으로 정리돼서 메모리 누수 방지
     }
@@ -73,7 +82,6 @@ class TodoListViewModel: ObservableObject {
         guard !title.isEmpty else { return }
         let newItem = TodoItem(title: title, createdAt: createdAt, isCompleted: isCompleted, category: category)
         modelContext.insert(newItem)
-        saveContext()
         fetchTodoItems()
     }
     
