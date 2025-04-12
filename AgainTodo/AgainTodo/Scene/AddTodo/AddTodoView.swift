@@ -36,16 +36,11 @@ struct AddTodoView: View {
                     .frame(maxWidth: .infinity)
                     .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                //TODO: 한국 시간대로 변경하기 
                 if viewModel.showDatePicker {
                     DatePicker("마감일 선택", selection: $viewModel.date, displayedComponents: [.date])
-                        .environment(\.timeZone, TimeZone(identifier: "Asia/Seoul")!)
+                        .environment(\.locale, Locale(identifier: "ko_KR"))
                 }
                 Spacer()
-            }
-            .onChange(of: viewModel.date) { _, newValue in
-                print(newValue)
-
             }
             .padding()
             .toolbar {

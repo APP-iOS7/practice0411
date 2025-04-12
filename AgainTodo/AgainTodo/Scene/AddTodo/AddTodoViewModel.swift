@@ -31,20 +31,23 @@ final class AddTodoViewModel: ObservableObject {
         locationManager.requestLocation()
         if let location = locationManager.location {
             Task{
-                //TODO: weather오류 처리 필요
                 var weatherModel : Weathers?
-                if showDatePicker {
-                    let result = await weatherManager.getDayWeather(day: date, for: location)
-                    weatherModel = Weathers.makeModel(data: result!, location: location)
+                if showDatePicker, let result = await weatherManager.getDayWeather(day: date, for: location)  {
+                    weatherModel = Weathers.makeModel(data: result, location: location)
                 }
                 else { weatherModel = nil}
                 
-                let todoItem = Todo(title: title, detail: detail, deadline: showDatePicker ? date : nil, weather: showDatePicker ? weatherModel : nil)
+                
+                let todoItem = Todo(title: title, detail: detail, deadline: showDatePicker ? date.addingTimeInterval(32400) : nil, weather: showDatePicker ? weatherModel : nil)
                 
                 modelManager.insertTodo(todoItem)
             }
         }
+        else {
+            let todoItem = Todo(title: title, detail: detail, deadline: showDatePicker ? date.addingTimeInterval(32400) : nil, weather: nil)
+            
+            modelManager.insertTodo(todoItem)
+        }
     }
-    
     
 }

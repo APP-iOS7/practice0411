@@ -27,4 +27,3 @@ struct TodoDetailView: View {
     TodoDetailView(todo: Todo.empty())
 }
 
-// 대체로 흐림, 0프로, 14.99도, 10.40도 4-16일

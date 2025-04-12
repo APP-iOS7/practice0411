@@ -18,19 +18,20 @@ final class TodoViewModel: ObservableObject {
     
     
     init () {
+        // Combine
         $todos
             .dropFirst()
             .sink { [weak self] updatedTodos in
                 self?.modelManager.updateAllTodo(updatedTodos)
             }
             .store(in: &cancellables)
-        fetchTodos()
         
         cancellableTimer = Timer
             .publish(every: 600, on: .main, in: .common)
             .autoconnect()
             .receive(on: DispatchQueue.main)
             .map {[weak self] _ -> [Todo] in
+                print("start")
                 self?.fetchTodos()
                 return self?.todos ?? []
             }
@@ -42,10 +43,17 @@ final class TodoViewModel: ObservableObject {
                     
                     await MainActor.run {
                         self.fetchTodos()
-                        print(todo.first?.weather?.maxTemp ?? 0)
+                        print("done")
                     }
                 }
             }
+        
+        // init excute
+        fetchTodos()
+        Task {
+            await self.updateWeatherData(todos: self.todos)
+            await MainActor.run {fetchTodos()}
+        }
     }
     
     func fetchTodos() {
