@@ -1,9 +1,5 @@
-//
-//  AddTodoView.swift
-//  AgainTodo
-//
-//  Created by 고요한 on 4/11/25.
-//
+//TODO: font 정리 및 데이터 형식 처리
+
 
 import SwiftUI
 

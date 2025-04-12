@@ -27,6 +27,6 @@ final class Todo: Identifiable, Equatable, ObservableObject {
     }
     
     static func empty() -> Todo {
-        return Todo(title: "empty todo", detail: "empty detail", deadline: Date(), isDone: false, weather: nil)
+        return Todo(title: "empty todo", detail: "empty detail", deadline: Date(), isDone: false, weather: Weathers.empty())
     }
 }

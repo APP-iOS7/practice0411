@@ -30,15 +30,15 @@ class Weathers {
     
     static func empty() -> Weathers {
         return Weathers(
-            weather: "",
-            icon: "",
+            weather: "empty weather",
+            icon: "cloud.rain",
             latitude: 0.0,
             longitude: 0.0,
             maxTemp: 0.0,
             minTemp: 0.0,
             precipitationChance: 0.0,
             uvValue: 0,
-            uvCategory: ""
+            uvCategory: "높음"
         )
     }
     
