@@ -1,4 +1,3 @@
-//TODO: font 정리 및 데이터 형식 처리
 
 
 import SwiftUI
@@ -17,23 +16,26 @@ struct AddTodoView: View {
                 
                 HStack(alignment: .top) {
                     Text("상세")
+                        .padding(.top, 8)
                     ZStack(alignment: .topLeading) {
                         TextEditor(text: $viewModel.detail)
                         if viewModel.detail.isEmpty {
                             Text("자세한 내용을 입력해주세요.")
                                 .foregroundStyle(.gray.opacity(0.5))
+                                .padding(.top, 8)
+                                .padding(.leading, 4)
                         }
                     }
-                    .frame(height: 300)
+                    .frame(height: textEditorHeight)
                 }
                 .padding(.top)
                 Button(action: {viewModel.showDatePicker.toggle()},label: {Text(viewModel.showDatePicker == true ?  "취소하기" : "마감일 설정하기").foregroundStyle(.black)})
-                    .frame(height: 40)
+                    .frame(height: showDatePickerButtonHeight)
                     .frame(maxWidth: .infinity)
                     .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 if viewModel.showDatePicker {
-                    DatePicker("마감일 선택", selection: $viewModel.date, displayedComponents: [.date])
+                    DatePicker("마감일 선택", selection: $viewModel.date, in: Date()... ,displayedComponents: [.date])
                         .environment(\.locale, Locale(identifier: "ko_KR"))
                 }
                 Spacer()

@@ -1,4 +1,4 @@
-//TODO: font 정리
+
 
 import SwiftUI
 
@@ -12,10 +12,10 @@ struct TodoView: View {
                     ForEach(viewModel.todos.indices, id: \.self) {index in
                         NavigationLink(destination: TodoDetailView(todo: viewModel.todos[index])) {
                             HStack {
-                                if viewModel.showCheckBox {
+                                if viewModel.showSelectBox {
                                     Toggle("", systemImage: viewModel.todos[index].isDone ? "checkmark.square.fill" : "square",isOn: $viewModel.todos[index].isDone)
                                         .labelsHidden()
-                                        .frame(width: 30, height: 30)
+                                        .frame(width: selectBoxWidth, height: selectBoxHeight)
                                         .toggleStyle(.button)
                                         .background(.clear)
 //Combine사용으로 필요 없는 부분
@@ -46,7 +46,7 @@ struct TodoView: View {
             .navigationTitle(Text("Todo"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { viewModel.showCheckBox.toggle() }, label: {Image(systemName: "checkmark.circle")})
+                    Button(action: { viewModel.showSelectBox.toggle() }, label: {Image(systemName: "checkmark.circle")})
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {

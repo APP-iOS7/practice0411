@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 struct TodoItemView: View {
@@ -42,7 +43,7 @@ struct TodoItemView: View {
                     .frame(width: midWidth)
 
                     VStack(alignment: .leading) {
-                        Text(todoItem.deadline?.description ?? "")
+                        Text(viewModel.dateFormatter(todoItem.deadline))
                             .font(.system(size: subtitleFontSize))
                             .foregroundStyle(.secondary)
                         Text(todoItem.weather?.weather ?? "")

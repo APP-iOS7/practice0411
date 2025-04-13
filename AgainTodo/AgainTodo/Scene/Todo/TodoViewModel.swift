@@ -13,7 +13,7 @@ final class TodoViewModel: ObservableObject {
     
     
     @Published var showAddTodoView: Bool = false
-    @Published var showCheckBox: Bool = false
+    @Published var showSelectBox: Bool = false
     @Published var todos: [Todo] = []
     
     
