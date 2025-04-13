@@ -40,6 +40,11 @@ class WeatherViewModel: ObservableObject {
         // 기본값 : 서울 (위치 값 못받아 왔을 경우)
         do {
             let location = location ?? self.location ?? CLLocation(latitude: 37.5665, longitude: 126.9780)
+            //CLLocation(latitude: 35.1796, longitude: 129.0756)//
+            print("🟩 현재 위치 좌표:\(location)")
+            
+            try await Task.sleep(nanoseconds: 500_000_000)
+            
             let weatherData = try await weatherService.fetchWeather(for: location)
             
             self.weather = weatherData
@@ -48,7 +53,7 @@ class WeatherViewModel: ObservableObject {
         } catch {
             self.error = error
             self.isLoading = false
-            print("🔴 날씨 정보 가져오기 실패: \(error.localizedDescription)")
+            print("🔴 날씨 정보 가져오기 실패(ViewModel): \(error.localizedDescription)")
         }
     }
     
@@ -61,6 +66,7 @@ class WeatherViewModel: ObservableObject {
     
     func requestLocationPermission() {
         locationService.requestLocationAuthorization()
+        locationService.startUpdatingLocation()
     }
 }
 
@@ -81,6 +87,6 @@ extension WeatherViewModel: LocationServiceDelegate {
     
     func locationDidFailWithError(error: Error) {
         self.error = error
-        print("🔴 위치 정보 가져오기 실패: \(error.localizedDescription)")
+        print("🔴 위치 정보 가져오기 실패(ViewModel): \(error.localizedDescription)")
     }
 }

@@ -48,7 +48,7 @@ class WeatherService {
                                windSpeed: currentWeather.wind.speed.value)
             return weatherData
         } catch {
-            print("🔴 날씨 정보 가져오기 실패: \(error.localizedDescription)")
+            print("🔴 날씨 정보 가져오기 실패(WeatherService): \(error.localizedDescription)")
             throw WeatherServiceError.failedToFetchWeather
         }
     }

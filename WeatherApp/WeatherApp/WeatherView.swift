@@ -34,9 +34,8 @@ struct WeatherView: View {
             }
         }
         .onAppear {
-            Task {
-                await viewModel.fetchWeather()
-            }
+            viewModel.requestLocationPermission()
+            viewModel.refreshWeather()
         }
     }
 }

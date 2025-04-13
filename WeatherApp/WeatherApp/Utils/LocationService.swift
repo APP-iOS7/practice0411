@@ -69,7 +69,6 @@ class LocationService: NSObject, ObservableObject {
         locationManager.requestLocation()
     }
     
-    
 }
 
 extension LocationService: CLLocationManagerDelegate {
@@ -81,7 +80,7 @@ extension LocationService: CLLocationManagerDelegate {
     
     // 위치 업데이트 실패 시 호출
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("🔴 위치 업데이트 실패: \(error.localizedDescription)")
+        print("🔴 위치 업데이트 실패(LocationService): \(error.localizedDescription)")
     }
     
     // 권한 상태 변경 시 호출
@@ -89,3 +88,5 @@ extension LocationService: CLLocationManagerDelegate {
         authorizationStatus = status
     }
 }
+
+
