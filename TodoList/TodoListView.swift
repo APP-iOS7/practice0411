@@ -26,26 +26,21 @@ struct TodoListView: View {
                     .cornerRadius(10)
                     .padding(.horizontal)
                 HStack {
-                    Text("Category:")
-                        .font(.headline)
-                    Menu {
-                        Button("All") {
-                            viewModel.selectedCategory = nil
-                        }
-                        ForEach(viewModel.uniqueCategories(), id: \.self) { category in
-                            Button(category) {
-                                viewModel.selectedCategory = category
-                            }
-                        }
-                    } label: {
-                        Text(viewModel.selectedCategory ?? "All")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 30)
-                            .padding(.vertical, 10)
-                    }
-                    .padding()
-                }
+                                    Text("Category:")
+                                        .font(.headline)
+                                        .foregroundStyle(.black)
+                                    Picker("Category", selection: $viewModel.selectedCategory) {
+                                        Text("All").tag(String?.none)
+                                        ForEach(viewModel.uniqueCategories(), id: \.self) { category in
+                                            Text(category).tag(String?.some(category))
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(.black)
+                                    .padding(.vertical, 10)
+                                }
+                                .padding(.horizontal)
+                
                 List {
                     ForEach(viewModel.filteredItems) { item in
                         HStack {
@@ -84,7 +79,7 @@ struct TodoListView: View {
             .onAppear {
                 viewModel.fetchTodoItems()
             }
-            .background(Color.indigo.edgesIgnoringSafeArea(.all))
+            .background(Color.teal.edgesIgnoringSafeArea(.all))
         }
     }
 }
