@@ -12,18 +12,47 @@ import Combine
 
 class RealtimeWeatherViewModel: NSObject, ObservableObject, @unchecked Sendable {
     
-    @Published var location: CLLocation = CLLocation.defaultLocation // 위치가 30킬로미터 이상 차이나면 업데이트
+    @Published var location: CLLocation = CLLocation.defaultLocation // 위치가 10킬로미터 이상 차이나면 업데이트
     @Published var weather: WeatherData?
     @Published var isLoading: Bool = false
     @Published var error: Error?
+        
     
+    private var cancellables = Set<AnyCancellable>()
     override init() {
         super.init()
+        
         locationManager.delegate = self
+        
+        $location
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .flatMap { [weak self] location -> AnyPublisher<WeatherData?, Never> in
+                guard let self = self else {
+                    return Empty<WeatherData?, Never>().eraseToAnyPublisher()
+                }
+                return Future<WeatherData?, Error> {promise in
+                    Task {
+                        do {
+                            print("Combine: Fetching weather for location: \(location.coordinate)...")
+                            
+                            let fetchedData = await self.getWeather()
+                            promise(.success(fetchedData))
+                        }
+                    }
+                }.catch({ _ in //promise(.failure(error)) 감지
+                    return Empty()
+                })
+                .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$weather)
+    
+        setTimerWeatherPublisher()
+            
     }
     
     private var weatherService = WeatherAPIService()
-    
     private var locationManager = CLLocationManager()
     
     
@@ -31,7 +60,6 @@ class RealtimeWeatherViewModel: NSObject, ObservableObject, @unchecked Sendable 
         if locationManager.authorizationStatus == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
         }
-        
     }
     
     func getLocation() {
@@ -46,75 +74,72 @@ class RealtimeWeatherViewModel: NSObject, ObservableObject, @unchecked Sendable 
     }
     
     @MainActor // <--- 함수 선언 앞에 추가!
-    func getWeather() async {
-        // 이 함수는 이제 @MainActor에서 실행됨
+    func getWeather() async -> WeatherData?{
         self.isLoading = true
         defer { self.isLoading = false }
         
         do {
             let newWeather = try await weatherService.fetchWeather(for: location)
-            // await 이후에도 MainActor로 돌아와서 실행됨
-            self.weather = newWeather // ✅ 메인 스레드에서 안전하게 업데이트됨!
+            
+            return newWeather
         } catch {
             print("Error: \(error)")
-            // self.error = error // 메인 스레드에서 안전
+            self.error = error // 메인 스레드에서 안전
+            return nil
         }
     }
     
 }
 extension RealtimeWeatherViewModel  {
     
-    //    private var TimerPublisher: AnyPublisher<WeatherData?, Error> { // 1분마다 날씨정보 가져옴
-    //        Timer.publish(every: 60.0, on: .main, in: .common)
-    //            .autoconnect()
-    //            .print("Timer Tick")
-    //            .flatMap { [weak self] _ -> AnyPublisher<WeatherData?, Error> in
-    //                guard let self = self else {
-    //                    return Empty<WeatherData?, Error>.init().eraseToAnyPublisher()
-    //                }
-    //                return Future<WeatherData?, Error> { promise in
-    //                    promise(.success(self.getWeather()))
-    //                }
-    //            }
-    //            .eraseToAnyPublisher()
-    //    }
-    private func createWeatherFetchPublisher(for location: CLLocation) -> AnyPublisher<WeatherData, Error> {
-        // Future를 사용하여 async/await 함수를 Combine 퍼블리셔로 래핑
-        Future<WeatherData, Error> { promise in
-            Task { // 비동기 작업 시작
-                do {
-                    print("Fetching weather for location: \(location.coordinate)...")
-                    // 실제 WeatherKit 호출 및 WeatherData로 매핑하는 비동기 함수 호출
-                    let fetchedData = try await self.weatherService.fetchWeather(for: location)
-                    promise(.success(fetchedData)) // 성공 시 결과 전달
-                } catch {
-                    promise(.failure(error)) // 실패 시 에러 전달
+    func setTimerWeatherPublisher () {
+         Timer.publish(every: 60.0, on: .main, in: .common)
+            .autoconnect()
+            .print("Timer Tick")
+        // Future는 동기 클로저를 받음
+            .flatMap {[weak self] _ -> AnyPublisher<WeatherData?, Error> in
+                guard let self = self else {
+                    return Empty<WeatherData?, Error>().eraseToAnyPublisher()
                 }
+                return Future<WeatherData?, Error> { promise in
+                    // Task를 생성하여 비동기 컨텍스트 제공
+                    Task {
+                        // Task 내부에서 async 함수 호출
+                        let weatherData = await self.getWeather()
+                        // 성공 시 promise 호출
+                        promise(.success(weatherData))
+                    }
+                }
+                .eraseToAnyPublisher()
             }
-        }
-        .eraseToAnyPublisher() // 타입을 AnyPublisher로 통일
-    }
-}
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                if case .failure(let error) = completion {
+                                   print("Timer Publisher Error: \(error)")
+                                   self?.error = error // @Published error 업데이트
+                               }
+            } receiveValue: { weatherData in
+                self.weather = weatherData
+            }
+            .store(in: &cancellables)
 
+    }
+   
+}
 extension RealtimeWeatherViewModel: CLLocationManagerDelegate  {
     
     // 위치 정보 업데이트 시 호출됨 (필수 구현)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print(self.location)
         // locations 배열에는 최신 위치 정보가 들어 있습니다.
         if let newLocation = locations.first {
             print("✅ Received location: \(newLocation)")
-            // 여기서 self.location = newLocation 같은 로직을 수행할 수 있습니다.
-            // 예를 들어, 특정 거리 이상 차이날 때만 업데이트 하려면:
-            if location.distance(from: newLocation) > 10000 { // 30km 이상 차이나면 업데이트 (예시)
+            
+            if self.location == CLLocation.defaultLocation {
+                // 초기 상태이므로 바로 업데이트
                 self.location = newLocation
-                // 위치가 업데이트 되었으므로 날씨 정보도 다시 가져올 수 있습니다.
-                Task {
-                    await getWeather()
-                }
-            } else {
-                print("Location difference is not significant enough to update.")
-                // 처음 위치를 받는 경우이거나, getWeather를 아직 호출 안했다면 여기서 호출할 수도 있습니다.
+                
+            } else if self.location.distance(from: newLocation) >= 10000 { // 10km 이상일 때만 업데이트
+                self.location = newLocation
             }
         }
     }

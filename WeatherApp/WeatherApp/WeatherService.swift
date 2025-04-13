@@ -10,14 +10,10 @@ import WeatherKit
 import CoreLocation
 
 class WeatherAPIService {
-    // 이새끼 역할을 어떻게 해야할까?
-    
-    
     func fetchWeather(for location: CLLocation) async throws -> WeatherData {
         do {
             let fetchedResult = try await WeatherService.shared.weather(for: location)
-            let currentWether = fetchedResult.currentWeather
-            print(currentWether)
+            //let currentWether = fetchedResult.currentWeather
             
             return WeatherData.init(from: fetchedResult) // type: Weather
         }

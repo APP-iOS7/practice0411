@@ -12,6 +12,7 @@ struct RealtimeWeatherView: View {
     @StateObject private var viewModel = RealtimeWeatherViewModel()
     @State private var longitude: String = ""
     @State private var latitude: String = ""
+    @FocusState private var isFocused: Bool
     
     func updateViewModelLocation() {
         
@@ -45,18 +46,37 @@ struct RealtimeWeatherView: View {
             }
            
             ScrollView {
-                HStack {
-                    Text("경도 입력")
-                    TextField("127.23", text: $latitude)
-                    Text("위도 입력")
-                    TextField("35.5", text: $longitude)
-                }
                 
-                HStack {
-                    Text(viewModel.weather?.weatherDescription ?? "날씨 몰랑")
-                    Text(viewModel.weather?.temperature.description ?? 0.0.description)
-                    Text(viewModel.weather?.humidity.description ?? 0.0.description)
-                    Text(viewModel.weather?.windSpeed.description ?? 0.0.description)
+                
+                VStack(spacing: 20) {
+                    HStack {
+                        Form {
+                            Text("경도 입력")
+                            TextField("127.23", text: $latitude)
+                                .keyboardType(.numberPad)
+                        }
+                        
+                        Form {
+                            Text("위도 입력")
+                            TextField("35.5", text: $longitude)
+                                .keyboardType(.numberPad)
+                        }
+                        
+                    }
+                    
+                    Image(systemName: viewModel.weather?.icon ?? "sun")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .padding()
+                    Text(" \(viewModel.weather?.weatherDescription ?? "몰랑")")
+                        .font(.title)
+                    Text("기온 \(viewModel.weather?.temperature.description ?? "0.0") 도")
+                        .font(.headline)
+                    Text("습도 \(viewModel.weather?.humidity.description ?? "0.0")도")
+                        .font(.callout)
+                    Text("풍속 \(viewModel.weather?.windSpeed.description ?? "0.0")mps")
+                        .font(.callout)
                 }
             }.navigationTitle("Real Time Weather")
         }

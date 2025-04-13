@@ -22,6 +22,7 @@ struct WeatherData: Codable, Identifiable, Equatable {
     var humidity: Double
     var windSpeed: Double
     var weatherDescription: String
+    var icon: String?
     
     static func == (lhs: WeatherData, rhs: WeatherData) -> Bool {
         lhs.id == rhs.id
@@ -39,5 +40,6 @@ struct WeatherData: Codable, Identifiable, Equatable {
         self.humidity = from.currentWeather.humidity
         self.windSpeed = from.currentWeather.wind.speed.value
         self.weatherDescription = from.currentWeather.condition.description
+        self.icon = from.currentWeather.symbolName
     }
 }
