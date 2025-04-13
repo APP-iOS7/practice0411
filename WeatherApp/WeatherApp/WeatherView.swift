@@ -21,19 +21,22 @@ struct WeatherView: View {
             
             VStack(spacing: 20) {
                 
-                WeatherInfoView(weather: weather ?? WeatherData(temperature: 0, description: "맑음", humidity: 0, windSpeed: 0))
+                WeatherInfoView(weather: viewModel.weather ?? WeatherData(temperature: 0, description: "맑음", humidity: 0, windSpeed: 0))
                 
-                RefreshButton(isLoading: isLoading) {
-                    Task {
-                        
-                    }
+                RefreshButton(isLoading: viewModel.isLoading) {
+                    viewModel.refreshWeather()
                 }
-                
-                
             }
             .padding(20)
             
-            LoadingView()
+            if viewModel.isLoading {
+                LoadingView()
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.fetchWeather()
+            }
         }
     }
 }
@@ -93,7 +96,7 @@ struct WeatherInfoView: View {
     
 }
 
-/// 날씨 데이터 항목 컴포넌트 (아이콘, 제목, 값)
+// 날씨 데이터 항목 컴포넌트 (아이콘, 제목, 값)
 struct WeatherDataItem: View {
     let iconName: String
     let title: String
@@ -108,6 +111,7 @@ struct WeatherDataItem: View {
             Text(value)
                 .font(.title3)
         }
+        .foregroundStyle(Color(hex: "#FFFFFF"))
     }
 }
 
