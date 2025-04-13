@@ -21,7 +21,7 @@ enum APIError: Error, LocalizedError {
         case .unknownError: return "알 수 없는 오류"
         case .typeDenied: return "올바른 타입이 아닙니다."
         case .rangeError: return "위도 경도의 올바른 범위가 아닙니다."
-
+            
         }
     }
 }
@@ -33,17 +33,25 @@ class WeatherViewModel: ObservableObject {
     @Published var error: Error?
     @Published var location: CLLocation = CLLocation.init()
     
-    func fetchWeather() async {
+    func fetchWeather() async -> Bool {
         do {
             isLoading = true
             let locationService = LocationService()
             locationService.requestLocation()
-            location = locationService.setCurrentCLLocation()
             try await Task.sleep(nanoseconds: 500_000_000)
-            weather = try await WeatherService.fetchWeather(for: self.location)
+            guard let currentLocation = locationService.setCurrentCLLocation() else {
+                debugPrint("위치 정보가 없습니다.")
+                isLoading = false
+                return false
+            }
+            location = currentLocation
+            weather = try await WeatherService.fetchWeather(for: currentLocation)
             isLoading = false
+            return true
         } catch {
             debugPrint("날씨 정보 가져오기 실패: \(error)")
+            isLoading = false
+            return false
         }
     }
     
