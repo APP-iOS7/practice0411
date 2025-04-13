@@ -21,7 +21,7 @@ struct WeatherView: View {
             
             VStack(spacing: 20) {
                 
-                WeatherInfoView(weather: viewModel.weather ?? WeatherData(temperature: 0, description: "맑음", humidity: 0, windSpeed: 0))
+                WeatherInfoView(weather: viewModel.weather ?? WeatherData(temperature: 0, description: "clear", humidity: 0, windSpeed: 0))
                 
                 RefreshButton(isLoading: viewModel.isLoading) {
                     viewModel.refreshWeather()
@@ -49,6 +49,10 @@ struct WeatherInfoView: View {
         VStack(alignment: .center, spacing: 16) {
             
             VStack(alignment: .center, spacing: 16) {
+                Image(systemName: Constants.WeatherIcons.iconFame(for: weather.description))
+                    .font(.system(size: 60))
+                    .foregroundStyle(Color(hex: "#FFFFFF"))
+                
                 // 온도 정보
                 Text("\(Int(weather.temperature))°C")
                     .font(.system(size: 50, weight: .bold))
