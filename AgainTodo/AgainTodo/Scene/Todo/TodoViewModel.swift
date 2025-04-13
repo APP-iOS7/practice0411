@@ -11,10 +11,13 @@ final class TodoViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     private var cancellableTimer: AnyCancellable?
     
+    private var selectedTodoList: [Todo] = []
+    
     
     @Published var showAddTodoView: Bool = false
     @Published var showSelectBox: Bool = false
     @Published var todos: [Todo] = []
+    @Published var isUpdateUI: Bool = false
     
     
     init () {
@@ -47,6 +50,12 @@ final class TodoViewModel: ObservableObject {
                     }
                 }
             }
+        
+        $showSelectBox
+            .sink { [weak self] _ in
+                self?.clearSelectedTodoList()
+            }
+            .store(in: &cancellables)
         
         // init excute
         fetchTodos()
@@ -87,5 +96,41 @@ final class TodoViewModel: ObservableObject {
         }
         
         modelManager.updateAllTodo(resultTodo)
+    }
+    
+    func addTodoListToSelectedBox(_ index: Int) {
+        if !isSelectedTodoList(index: index) {
+            selectedTodoList.append(todos[index])
+        }
+        else {
+            selectedTodoList.remove(at: selectedTodoList.firstIndex(of: todos[index])!)
+        }
+        isUpdateUI.toggle()
+    }
+    
+    func clearSelectedTodoList() {
+        selectedTodoList.removeAll()
+    }
+    
+    func isSelectedTodoList(index: Int) -> Bool {
+        return selectedTodoList.contains(where: { $0.id == todos[index].id })
+    }
+    
+    func saveSelectedTodoList() {
+        for todo in selectedTodoList {
+            todo.isDone.toggle()
+            updateTodo(todo)
+        }
+        clearSelectedTodoList()
+        showSelectBox.toggle()
+    }
+    
+    func deleteSelectedTodoList() {
+        for todo in selectedTodoList {
+            deleteTodo(todo)
+        }
+        clearSelectedTodoList()
+        fetchTodos()
+        showSelectBox.toggle()
     }
 }

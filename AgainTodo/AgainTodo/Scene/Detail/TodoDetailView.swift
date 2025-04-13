@@ -3,6 +3,8 @@
 import SwiftUI
 
 struct TodoDetailView: View {
+    @ObservedObject private var viewModel = TodoDetailViewModel()
+    
     let todo: Todo
     
     var body: some View {
@@ -24,7 +26,7 @@ struct TodoDetailView: View {
                     Text("마감일")
                         .frame(width: detailItemWidth, alignment: .leading)
                         .fontWeight(detailSubtitleFontWeight)
-                    Text(dateFormatter(todo.deadline))
+                    Text(viewModel.dateFormatter(todo.deadline))
                 }
                 HStack {
                     Text("완료 여부")
@@ -50,9 +52,9 @@ struct TodoDetailView: View {
                         VStack(alignment: .leading) {
                             Text(todo.weather?.weather.description ?? "알수 없음")
                             HStack {
-                                Text(temperatureFormatter(todo.weather?.maxTemp))
+                                Text(viewModel.temperatureFormatter(todo.weather?.maxTemp))
                                     .foregroundStyle(.red)
-                                Text(temperatureFormatter(todo.weather?.minTemp))
+                                Text(viewModel.temperatureFormatter(todo.weather?.minTemp))
                                     .foregroundStyle(.blue)
                             }
                         }
@@ -61,7 +63,7 @@ struct TodoDetailView: View {
                         Text("강수 확률")
                             .frame(width: detailItemWidth, alignment: .leading)
                             .fontWeight(detailSubtitleFontWeight)
-                        Text(precipitationChanceFormatter(todo.weather?.precipitationChance))
+                        Text(viewModel.precipitationChanceFormatter(todo.weather?.precipitationChance))
                     }
                     HStack {
                         Text("UV 지수")
@@ -76,29 +78,6 @@ struct TodoDetailView: View {
                 }
             }
         }
-    }
-    
-    func dateFormatter(_ date: Date?) -> String {
-        if date != nil {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy년 MM월 dd일"
-            return formatter.string(from: date!)
-        }
-        else { return "" }
-    }
-    
-    func temperatureFormatter(_ temperature: Double?) -> String {
-        if temperature != nil {
-            return String(format: "%.1f°C", temperature!)
-        }
-        else { return "" }
-    }
-    
-    func precipitationChanceFormatter(_ precipitationChance: Double?) -> String {
-        if precipitationChance != nil {
-            return String(format: "%.0f%%", precipitationChance!)
-        }
-        else { return "" }
     }
 }
 

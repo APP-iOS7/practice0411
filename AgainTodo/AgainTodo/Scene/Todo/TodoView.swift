@@ -13,17 +13,14 @@ struct TodoView: View {
                         NavigationLink(destination: TodoDetailView(todo: viewModel.todos[index])) {
                             HStack {
                                 if viewModel.showSelectBox {
-                                    Toggle("", systemImage: viewModel.todos[index].isDone ? "checkmark.square.fill" : "square",isOn: $viewModel.todos[index].isDone)
-                                        .labelsHidden()
-                                        .frame(width: selectBoxWidth, height: selectBoxHeight)
-                                        .toggleStyle(.button)
-                                        .background(.clear)
-//Combine사용으로 필요 없는 부분
-//                                        .onChange(of: viewModel.todos[index].isDone) {
-//                                            viewModel.updateTodo(viewModel.todos[index])
-//                                        }
-                                        
+                                    Button(
+                                        action: {viewModel.addTodoListToSelectedBox(index)},
+                                        label: {
+                                            Image(systemName: viewModel.isSelectedTodoList(index: index) ? "checkmark.square.fill" : "square")
+                                                .id(viewModel.isUpdateUI)
+                                        })
                                 }
+                                
                                 TodoItemView(todoItem: viewModel.todos[index])
                                 Spacer()
                             }
@@ -45,14 +42,25 @@ struct TodoView: View {
             .padding()
             .navigationTitle(Text("Todo"))
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { viewModel.showSelectBox.toggle() }, label: {Image(systemName: "checkmark.circle")})
+                if viewModel.showSelectBox {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { viewModel.deleteSelectedTodoList() }, label: {Image(systemName: "trash")})
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { viewModel.saveSelectedTodoList() }, label: {Image(systemName: "checklist")})
+                    }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { viewModel.showAddTodoView.toggle() }, label: {Image(systemName: "plus")})
+                    Button(action: { viewModel.showSelectBox.toggle() }, label: {Image(systemName: viewModel.showSelectBox ? "xmark.circle" : "checkmark.circle")})
                 }
                 
+                if !viewModel.showSelectBox {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { viewModel.showAddTodoView.toggle() }, label: {Image(systemName: "plus")})
+                    }
+                }
             }
         }
         .sheet(isPresented: $viewModel.showAddTodoView, onDismiss: {viewModel.fetchTodos()}, content: { AddTodoView() })
