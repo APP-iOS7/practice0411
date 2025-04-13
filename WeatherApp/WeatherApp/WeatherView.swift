@@ -11,8 +11,7 @@ import CoreLocation
 // TODO: ViewModel 생성 후 View 연결
 struct WeatherView: View {
     
-    @State private var weather: WeatherData?
-    @State private var isLoading = false
+    @StateObject private var viewModel = WeatherViewModel()
     
     var body: some View {
         ZStack {
