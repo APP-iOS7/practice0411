@@ -1,18 +1,17 @@
 //
-//  AddTodoView.swift
+//  AddDailyTodoView.swift
 //  TodoList
 //
-//  Created by Yung Hak Lee on 4/11/25.
+//  Created by Yung Hak Lee on 4/13/25.
 //
 
 import SwiftUI
 import SwiftData
 
-struct AddTodoView: View {
-    @ObservedObject var viewModel: TodoListViewModel
+struct AddDailyTodoView: View {
+    @ObservedObject var viewModel: DailyTodoListViewModel
     @Environment(\.dismiss) var dismiss
-    @State var title = ""
-    @State var selectedDate: Date = Date()
+    @State private var title = ""
     @State private var selectedCategory: String? = nil
     @State private var newCategory = ""
     private let newCategoryOption = "New Category"
@@ -31,14 +30,12 @@ struct AddTodoView: View {
             if selectedCategory == newCategoryOption {
                 TextField("New Category", text: $newCategory)
             }
-            TextField("Add Todo", text: $title)
-            DatePicker("Date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
-                .datePickerStyle(.automatic)
+            TextField("Add Daily Todo", text: $title)
         }
         
         Spacer()
         Button(action: {
-            addTodoItem()
+            addDailyTodoItem()
         }) {
             Text("Add")
                 .font(.headline)
@@ -51,7 +48,7 @@ struct AddTodoView: View {
         .padding(.horizontal)
         .padding(.bottom, 10)
         .disabled(title.isEmpty)
-        .navigationTitle("Add Todo")
+        .navigationTitle("Add Daily Todo")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -62,25 +59,9 @@ struct AddTodoView: View {
         }
     }
     
-    private func addTodoItem() {
+    private func addDailyTodoItem() {
         let categoryToAdd = selectedCategory == newCategoryOption ? (newCategory.isEmpty ? nil : newCategory) : selectedCategory
-        viewModel.addTodo(title: title, createdAt: selectedDate, category: categoryToAdd)
+        viewModel.addDailyTodo(title: title, category: categoryToAdd)
         dismiss()
     }
-}
-
-
-#Preview {
-    // ModelContainer 생성
-    let container = try! ModelContainer(
-        for: TodoItem.self,
-        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-    )
-    // TodoListViewModel 초기화
-    let viewModel = TodoListViewModel(modelContext: container.mainContext)
-    // NavigationStack으로 래핑
-    return NavigationStack {
-        AddTodoView(viewModel: viewModel)
-    }
-    .modelContainer(container)
 }

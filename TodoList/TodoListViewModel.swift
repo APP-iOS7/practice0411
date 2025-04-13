@@ -55,7 +55,7 @@ class TodoListViewModel: ObservableObject {
                 if !searchText.isEmpty {
                     filtered = filtered.filter {
                         $0.title.localizedCaseInsensitiveContains(searchText) ||
-                                                ($0.category?.localizedCaseInsensitiveContains(searchText) ?? false)
+                        ($0.category?.localizedCaseInsensitiveContains(searchText) ?? false)
                     }
                 }
                 return filtered

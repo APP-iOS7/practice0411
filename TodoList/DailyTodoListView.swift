@@ -1,24 +1,23 @@
 //
-//  TodoListView.swift
+//  DailyTodoList.swift
 //  TodoList
 //
-//  Created by Yung Hak Lee on 4/11/25.
+//  Created by Yung Hak Lee on 4/13/25.
 //
 
 import SwiftUI
 import SwiftData
 
-struct TodoListView: View {
-    @StateObject private var viewModel: TodoListViewModel
+struct DailyTodoListView: View {
+    @StateObject private var viewModel: DailyTodoListViewModel
     @Environment(\.modelContext) private var modelContext
-    @State private var selectedCategoryFilter: String? = nil
     
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: TodoListViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: DailyTodoListViewModel(modelContext: modelContext))
     }
     
     var body: some View {
-        VStack(spacing:0) {
+        VStack(spacing: 0) {
             HStack {
                 Text("Category:")
                     .font(.headline)
@@ -35,7 +34,7 @@ struct TodoListView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 8)
-            TextField("Search TodoList...", text: $viewModel.searchText)
+            TextField("Search Daily Todos...", text: $viewModel.searchText)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
@@ -48,7 +47,7 @@ struct TodoListView: View {
                 
                 List {
                     if viewModel.filteredItems.isEmpty {
-                        Text("No Todos found.")
+                        Text("No daily todos found.")
                             .foregroundStyle(.gray)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
@@ -64,17 +63,9 @@ struct TodoListView: View {
                                     .strikethrough(item.isCompleted)
                                 
                                 Spacer()
-                                if let createdAt = item.createdAt {
-                                    Text(createdAt, style: .date)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                    Text(createdAt, style: .time)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                }
                             }
                         }
-                        .onDelete(perform: viewModel.removeTodo)
+                        .onDelete(perform: viewModel.removeDailyTodo)
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -83,17 +74,17 @@ struct TodoListView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding()
         }
-        .navigationTitle("Todo List")
+        .navigationTitle("Daily Todo List")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: AddTodoView(viewModel: viewModel)) {
+                NavigationLink(destination: AddDailyTodoView(viewModel: viewModel)) {
                     Image(systemName: "plus")
                         .foregroundStyle(.black)
                 }
             }
         }
         .onAppear {
-            viewModel.fetchTodoItems()
+            viewModel.fetchDailyTodoItems()
         }
         .background(Color.teal.edgesIgnoringSafeArea(.all))
     }
