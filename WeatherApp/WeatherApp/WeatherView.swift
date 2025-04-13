@@ -64,23 +64,30 @@ struct WeatherInfoView: View {
                     .foregroundStyle(Color(hex: "#FFFFFF"))
                 
                 Divider()
+                    .background(Color(hex: "#FFFFFF"))
                 
-                // 추가 날씨 정보 (습도, 풍속)
                 HStack(spacing: 30) {
                     // 습도 정보
-                    WeatherDataItem(
-                        iconName: "humidity",
-                        title: "습도",
-                        value: "\(Int(weather.humidity * 100))%"
-                    )
+                    VStack {
+                        Image(systemName: "humidity")
+                            .font(.title)
+                        Text("습도")
+                            .font(.caption)
+                        Text("\(Int(weather.humidity * 100))%")
+                            .font(.title3)
+                    }
                     
                     // 풍속 정보
-                    WeatherDataItem(
-                        iconName: "wind",
-                        title: "풍속",
-                        value: "\(Int(weather.windSpeed))m/s"
-                    )
+                    VStack {
+                        Image(systemName: "wind")
+                            .font(.title)
+                        Text("풍속")
+                            .font(.caption)
+                        Text("\(Int(weather.windSpeed))m/s")
+                            .font(.title3)
+                    }
                 }
+                .foregroundStyle(Color(hex: "#FFFFFF"))
                 .padding(.top, 10)
             }
             
@@ -98,25 +105,6 @@ struct WeatherInfoView: View {
         .cornerRadius(12)
     }
     
-}
-
-// 날씨 데이터 항목 컴포넌트 (아이콘, 제목, 값)
-struct WeatherDataItem: View {
-    let iconName: String
-    let title: String
-    let value: String
-    
-    var body: some View {
-        VStack {
-            Image(systemName: iconName)
-                .font(.title)
-            Text(title)
-                .font(.caption)
-            Text(value)
-                .font(.title3)
-        }
-        .foregroundStyle(Color(hex: "#FFFFFF"))
-    }
 }
 
 /// 새로고침 버튼 컴포넌트

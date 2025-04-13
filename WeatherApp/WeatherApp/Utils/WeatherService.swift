@@ -39,9 +39,11 @@ class WeatherService {
             let weather = try await weatherService.weather(for: location)
             let currentWeather = weather.currentWeather
             
+            let transDescription = Constants.WeatherTranslation.translate(for: currentWeather.condition.description)
+            
             // WeatherData 데이터로 반환
             let weatherData = WeatherData(temperature: currentWeather.temperature.value,
-                               description: currentWeather.condition.description,
+                               description: transDescription, // currentWeather.condition.description,
                                humidity: currentWeather.humidity,
                                windSpeed: currentWeather.wind.speed.value)
             return weatherData
