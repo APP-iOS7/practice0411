@@ -77,7 +77,7 @@ struct DailyTodoListView: View {
         .navigationTitle("Daily Todo List")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: AddDailyTodoView(viewModel: viewModel)) {
+                NavigationLink(destination: AddTodoView(modelContext: modelContext)) {
                     Image(systemName: "plus")
                         .foregroundStyle(.black)
                 }

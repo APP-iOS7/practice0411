@@ -9,17 +9,30 @@ import Foundation
 
 class TodoController {
     private let modelContext: ModelContext
-    
+
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
-    
+
+    // MARK: 카테고리 가져오기
+    func fetchCategories() -> [String] {
+        var descriptor = FetchDescriptor<TodoItem>()
+        descriptor.predicate = #Predicate { $0.category != nil }
+        do {
+            let items = try modelContext.fetch(descriptor)
+            return Array(Set(items.compactMap { $0.category })).sorted()
+        } catch {
+            print("fetch failed: \(error)")
+        }
+        return []
+    }
+
     // MARK: 새 할일 추가
     func addTodo(withItem item: TodoItem) {
         modelContext.insert(item)
         saveContext()
     }
-    
+
     //MARK: 할 일 제거
     func removeTodo(withItems items: [TodoItem]) {
         for item in items {
@@ -27,13 +40,13 @@ class TodoController {
         }
         saveContext()
     }
-    
+
     // MARK: 완료 된 것 지우기
     func changeComplete(for item: TodoItem, isCompleted: Bool = true) {
         item.isCompleted = isCompleted
         saveContext()
     }
-    
+
     // MARK: 저장 공통 로직
     private func saveContext() {
         do {
@@ -42,6 +55,4 @@ class TodoController {
             print("save failed: \(error)")
         }
     }
-    
-    
 }

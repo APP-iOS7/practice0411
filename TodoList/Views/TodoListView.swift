@@ -86,7 +86,7 @@ struct TodoListView: View {
         .navigationTitle("Todo List")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: AddTodoView(viewModel: viewModel)) {
+                NavigationLink(destination: AddTodoView(modelContext: modelContext)) {
                     Image(systemName: "plus")
                         .foregroundStyle(.black)
                 }

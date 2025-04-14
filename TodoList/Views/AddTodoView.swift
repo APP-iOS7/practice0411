@@ -9,19 +9,26 @@ import SwiftUI
 import SwiftData
 
 struct AddTodoView: View {
-    @ObservedObject var viewModel: TodoListViewModel
+    @StateObject var viewModel: AddTodoViewModel
+
     @Environment(\.dismiss) var dismiss
+
     @State var title = ""
     @State var selectedDate: Date = Date()
     @State private var selectedCategory: String? = nil
     @State private var newCategory = ""
+
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: AddTodoViewModel(modelContext: modelContext))
+    }
+
     private let newCategoryOption = "New Category"
     
     var body: some View {
         Form {
             Picker("Category", selection: $selectedCategory) {
                 Text("None").tag(String?.none)
-                ForEach(viewModel.uniqueCategories(), id: \.self) { category in
+                ForEach(viewModel.categories, id: \.self) { category in
                     Text(category).tag(String?.some(category))
                 }
                 Text(newCategoryOption).tag(String?.some(newCategoryOption))
@@ -80,7 +87,8 @@ struct AddTodoView: View {
     let viewModel = TodoListViewModel(modelContext: container.mainContext)
     // NavigationStack으로 래핑
     return NavigationStack {
-        AddTodoView(viewModel: viewModel)
+        AddTodoView(modelContext: container.mainContext)
+            .environmentObject(viewModel) // TodoListViewModel을 환경 객체로 전달
     }
     .modelContainer(container)
 }
