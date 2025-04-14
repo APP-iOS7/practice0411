@@ -43,48 +43,56 @@ struct RealtimeWeatherView: View {
                     viewModel.getLocationPermission()
                     viewModel.getLocation()
                 }.buttonStyle(.borderedProminent)
-            }
-           
-            ScrollView {
+                
+            } .padding()
+            
+            HStack {
+                    Text("경도 입력")
+                    TextField("127.23", text: $latitude)
+                        .keyboardType(.numberPad)
                 
                 
-                VStack(spacing: 20) {
-                    HStack {
-                        Form {
-                            Text("경도 입력")
-                            TextField("127.23", text: $latitude)
-                                .keyboardType(.numberPad)
-                        }
-                        
-                        Form {
-                            Text("위도 입력")
-                            TextField("35.5", text: $longitude)
-                                .keyboardType(.numberPad)
-                        }
-                        
-                    }
-                    
-                    Image(systemName: viewModel.weather?.icon ?? "sun")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 80, height: 80)
-                        .padding()
-                    Text(" \(viewModel.weather?.weatherDescription ?? "몰랑")")
-                        .font(.title)
-                    Text("기온 \(viewModel.weather?.temperature.description ?? "0.0") 도")
-                        .font(.headline)
-                    Text("습도 \(viewModel.weather?.humidity.description ?? "0.0")도")
-                        .font(.callout)
-                    Text("풍속 \(viewModel.weather?.windSpeed.description ?? "0.0")mps")
-                        .font(.callout)
+               
+                    Text("위도 입력")
+                    TextField("35.5", text: $longitude)
+                        .keyboardType(.numberPad)
+                
+                
+                Button("ENTER"){
+                    updateViewModelLocation()
                 }
-            }.navigationTitle("Real Time Weather")
+                
+                
+            }.padding()
+                .border(.black)
+            if viewModel.isLoading {
+                ProgressView()
+            } else {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        Image(systemName: viewModel.weather?.icon ?? "sun")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .padding()
+                        Text(" \(viewModel.weather?.weatherDescription ?? "몰랑")")
+                            .font(.title)
+                        Text("기온 \(String(format: "%.1f", viewModel.weather?.temperature ?? 0.0)) 도")
+                            .font(.headline)
+                        
+                        Text("습도 \(String(format: "%.1f", viewModel.weather?.humidity ?? 0.0)) %")
+                            .font(.callout)
+                        
+                        Text("풍속 \(String(format: "%.1f", viewModel.weather?.windSpeed ?? 0.0)) mps")
+                    }
+                }.navigationTitle("Real Time Weather")
+            }
         }
-        .padding()
+        
         
     }
 }
-
+//
 #Preview {
     RealtimeWeatherView()
 }

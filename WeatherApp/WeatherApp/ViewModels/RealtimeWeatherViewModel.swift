@@ -14,7 +14,11 @@ class RealtimeWeatherViewModel: NSObject, ObservableObject, @unchecked Sendable 
     
     @Published var location: CLLocation = CLLocation.defaultLocation // 위치가 10킬로미터 이상 차이나면 업데이트
     @Published var weather: WeatherData?
-    @Published var isLoading: Bool = false
+    @Published var isLoading: Bool = false {
+        didSet {
+            print("is Loading -> \(isLoading)")
+        }
+    }
     @Published var error: Error?
         
     
