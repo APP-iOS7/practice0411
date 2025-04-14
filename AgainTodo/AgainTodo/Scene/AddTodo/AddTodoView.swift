@@ -1,11 +1,18 @@
 
 
 import SwiftUI
+import SwiftData
 
 struct AddTodoView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = AddTodoViewModel()
-    
+    @Environment(\.modelContext) private var modelContext
+
+    @StateObject private var viewModel: AddTodoViewModel
+
+    init(context: ModelContext) {
+      _viewModel = StateObject(wrappedValue: AddTodoViewModel(context: context))
+    }
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -61,6 +68,6 @@ struct AddTodoView: View {
     }
 }
 
-#Preview {
-    AddTodoView()
-}
+//#Preview {
+//    AddTodoView()
+//}

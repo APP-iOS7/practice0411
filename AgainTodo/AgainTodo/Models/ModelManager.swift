@@ -4,17 +4,10 @@ import Foundation
 import SwiftData
 
 final class TodoModelManager {
-    private let modelContainer: ModelContainer
     private let modelContext: ModelContext
-    
-    static let shared = TodoModelManager()
-    
-    private init() {
-        modelContainer = try! ModelContainer.init(
-            for: Schema([Todo.self, Weathers.self]),
-            configurations: ModelConfiguration(isStoredInMemoryOnly: false)
-        )
-        modelContext = ModelContext(modelContainer)
+
+    init(context: ModelContext) {
+        modelContext = context
     }
     
     //MARK: Todo - CRUD

@@ -1,11 +1,12 @@
 
 import Foundation
 import Combine
+import SwiftData
 
 
 
 final class TodoViewModel: ObservableObject {
-    private var modelManager: TodoModelManager = .shared
+    private var modelManager: TodoModelManager
     private var weatherManager = WeatherManager()
     private var locationManager = LocationManager()
     private var cancellables: Set<AnyCancellable> = []
@@ -20,7 +21,8 @@ final class TodoViewModel: ObservableObject {
     @Published var isUpdateUI: Bool = false
     
     
-    init () {
+    init (context: ModelContext) {
+        self.modelManager = TodoModelManager(context: context)
         // Combine
         $todos
             .dropFirst()

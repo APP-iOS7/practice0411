@@ -1,10 +1,16 @@
 
 
 import SwiftUI
+import SwiftData
 
 struct TodoView: View {
-    @ObservedObject private var viewModel = TodoViewModel()
-    
+    @Environment(\.modelContext) private var modelContext
+    @ObservedObject private var viewModel: TodoViewModel
+
+    init(context: ModelContext) {
+        _viewModel = ObservedObject(wrappedValue: TodoViewModel(context: context))
+    }
+
     var body: some View {
         NavigationStack{
             VStack(alignment: .leading) {
@@ -63,15 +69,11 @@ struct TodoView: View {
                 }
             }
         }
-        .sheet(isPresented: $viewModel.showAddTodoView, onDismiss: {viewModel.fetchTodos()}, content: { AddTodoView() })
+        .sheet(isPresented: $viewModel.showAddTodoView, onDismiss: {viewModel.fetchTodos()}, content: { AddTodoView(context: modelContext) })
         .onAppear {
             LocationManager().requestLocation()
         }
     }
     
     
-}
-
-#Preview {
-    TodoView()
 }

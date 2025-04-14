@@ -1,10 +1,10 @@
 
 import Foundation
 import Combine
-
+import SwiftData
 
 final class AddTodoViewModel: ObservableObject {
-    private var modelManager: TodoModelManager = .shared
+    private var modelManager: TodoModelManager
     private var locationManager = LocationManager()
     private var weatherManager = WeatherManager()
     
@@ -13,8 +13,9 @@ final class AddTodoViewModel: ObservableObject {
     @Published var showDatePicker: Bool = false
     @Published var date: Date = Date()
     @Published var isFormValid: Bool = false
-    
-    init() {
+
+    init(context: ModelContext) {
+        self.modelManager = TodoModelManager(context: context)
         Publishers.CombineLatest($title, $detail)
             .map {
                 return !$0.trimmingCharacters(in: .whitespaces).isEmpty && !$1.trimmingCharacters(in: .whitespaces).isEmpty }

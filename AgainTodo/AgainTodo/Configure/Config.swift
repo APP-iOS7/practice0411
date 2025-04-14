@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftUI
+import SwiftUICore
 
 // MARK: Font-Size
 //TodoView
