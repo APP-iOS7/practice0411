@@ -12,8 +12,7 @@ import SwiftData
 struct TodoListApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            TodoItem.self,
-            DailyTodoItem.self
+            TodoItem.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         

@@ -10,7 +10,7 @@ import SwiftData
 import Combine
 
 class DailyTodoListViewModel: ObservableObject {
-    @Published var dailyTodoItems: [DailyTodoItem] = []
+    @Published var dailyTodoItems: [TodoItem] = []
     @Published var searchText = ""
     @Published var selectedCategory: String?
     
@@ -25,7 +25,7 @@ class DailyTodoListViewModel: ObservableObject {
         startMidnightResetTimer()
     }
     
-    var filteredItems: [DailyTodoItem] {
+    var filteredItems: [TodoItem] {
         dailyTodoItems.filter { item in
             (searchText.isEmpty || item.title.lowercased().contains(searchText.lowercased())) &&
             (selectedCategory == nil || item.category == selectedCategory)
@@ -37,14 +37,14 @@ class DailyTodoListViewModel: ObservableObject {
     }
     
     func addDailyTodo(title: String, category: String?) {
-        let newItem = DailyTodoItem(title: title, category: category)
+        let newItem = TodoItem(title: title, category: category)
         modelContext.insert(newItem)
         try? modelContext.save()
         fetchDailyTodoItems()
         
     }
     
-    func toggleCompleted(for item: DailyTodoItem) {
+    func toggleCompleted(for item: TodoItem) {
         item.isCompleted.toggle()
         try? modelContext.save()
         fetchDailyTodoItems()
@@ -59,7 +59,7 @@ class DailyTodoListViewModel: ObservableObject {
     }
     
     func fetchDailyTodoItems() {
-        let descriptor = FetchDescriptor<DailyTodoItem>(sortBy: [SortDescriptor(\.title)])
+        let descriptor = FetchDescriptor<TodoItem>(sortBy: [SortDescriptor(\.title)])
         do {
             dailyTodoItems = try modelContext.fetch(descriptor)
         } catch {

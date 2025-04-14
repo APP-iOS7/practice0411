@@ -20,7 +20,7 @@ final class TodoItem: Identifiable {
     init(
         title: String,
         id: UUID = UUID(),
-        createdAt: Date?,
+        createdAt: Date? = nil,
         isCompleted: Bool = false,
         category: String? = nil
     ) {

@@ -33,7 +33,7 @@ struct ContentView: View {
 
 #Preview {
     let container = try! ModelContainer(
-        for: TodoItem.self, DailyTodoItem.self,
+        for: TodoItem.self,
         configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
     return ContentView()
