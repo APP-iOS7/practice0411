@@ -9,6 +9,8 @@ import Combine
 import SwiftData
 
 class TodoListViewModel: ObservableObject {
+    private let controller: TodoController
+    
     @Published var todoItems: [TodoItem] = []
     @Published var filteredItems: [TodoItem] = []
     @Published var newTodo: String = ""
@@ -22,6 +24,7 @@ class TodoListViewModel: ObservableObject {
     private let modelContext: ModelContext
     
     init(modelContext: ModelContext) {
+        self.controller = TodoController(modelContext: modelContext)
         self.modelContext = modelContext
         setupDataObservation()
         setupFiltering()
@@ -70,7 +73,9 @@ class TodoListViewModel: ObservableObject {
     // MARK: 할 일 가져오기
     func fetchTodoItems() {
         do {
-            let descriptor = FetchDescriptor<TodoItem>(sortBy: [SortDescriptor(\.createdAt, order: .forward)])
+            var descriptor = FetchDescriptor<TodoItem>(sortBy: [SortDescriptor(\.createdAt, order: .forward)])
+            // createdAt이 nil이 아닌 것만 가져옴
+            descriptor.predicate = #Predicate { $0.createdAt != nil }
             todoItems = try modelContext.fetch(descriptor)
         } catch {
             print("fetch failed: \(error)")
@@ -81,33 +86,22 @@ class TodoListViewModel: ObservableObject {
     func addTodo(title: String, createdAt: Date, category: String?) {
         guard !title.isEmpty else { return }
         let newItem = TodoItem(title: title, createdAt: createdAt, isCompleted: isCompleted, category: category)
-        modelContext.insert(newItem)
+        controller.addTodo(withItem: newItem)
         fetchTodoItems()
     }
     
     //MARK: 할 일 제거
     func removeTodo(at indexSet: IndexSet) {
-        for index in indexSet {
-            modelContext.delete(todoItems[index])
-            saveContext()
-            fetchTodoItems()
-        }
+        // FIXME: filterItems 와 todoItems 구분
+        let removeItems = indexSet.map { todoItems[$0] }
+        controller.removeTodo(withItems: removeItems)
+        fetchTodoItems()
     }
     
     // MARK: 완료 된 것 지우기
     func toggleCompleted(for item: TodoItem) {
-        item.isCompleted.toggle()
-        saveContext()
+        controller.changeComplete(for: item, isCompleted: !item.isCompleted)
         fetchTodoItems()
-    }
-    
-    // MARK: 저장 공통 로직
-    private func saveContext() {
-        do {
-            try modelContext.save()
-        } catch {
-            print("save failed: \(error)")
-        }
     }
     
     // MARK: 카테고리 생성
