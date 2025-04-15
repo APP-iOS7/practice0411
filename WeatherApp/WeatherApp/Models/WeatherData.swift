@@ -36,6 +36,7 @@ struct WeatherData: Codable, Identifiable, Equatable {
     }
     
     init(from: Weather) {
+        print("icon symbolName: \(from.currentWeather.symbolName)")
         self.temperature = from.currentWeather.temperature.value
         self.humidity = from.currentWeather.humidity
         self.windSpeed = from.currentWeather.wind.speed.value
