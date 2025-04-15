@@ -7,13 +7,29 @@
 
 import CoreLocation
 import SwiftUI
+import WeatherKit
 
-// TODO: ViewModel 작업
+enum WeatherServiceError: Error {
+    case failedToFetchWeather
+    case locationError
+    case networkError
+
+    var message: String {
+        switch self {
+        case .failedToFetchWeather:
+            return "날씨 정보를 가져오는데 실패했습니다."
+        case .locationError:
+            return "위치 정보를 가져오는데 실패했습니다."
+        case .networkError:
+            return "네트워크 연결이 끊겼습니다."
+        }
+    }
+}
 
 class WeatherViewModel: ObservableObject {
     
     // 서비스
-    private var weatherService = WeatherService.shared
+    private let weatherService = WeatherKit.WeatherService()
     private var locationService = LocationService.shared
     
     @Published var weather: WeatherData?
@@ -45,8 +61,18 @@ class WeatherViewModel: ObservableObject {
             
             try await Task.sleep(nanoseconds: 500_000_000)
             
-            let weatherData = try await weatherService.fetchWeather(for: location)
-            
+            let weather = try await weatherService.weather(for: location)
+
+            let currentWeather = weather.currentWeather
+
+            let transDescription = Constants.WeatherTranslation.translate(for: currentWeather.condition.description)
+
+            // WeatherData 데이터로 반환
+            let weatherData = WeatherData(temperature: currentWeather.temperature.value,
+                                          description: transDescription, // currentWeather.condition.description,
+                                          humidity: currentWeather.humidity,
+                                          windSpeed: currentWeather.wind.speed.value)
+
             self.weather = weatherData
             self.location = location
             self.isLoading = false
@@ -56,7 +82,7 @@ class WeatherViewModel: ObservableObject {
             print("🔴 날씨 정보 가져오기 실패(ViewModel): \(error.localizedDescription)")
         }
     }
-    
+
     // 새로고침
     func refreshWeather() {
         Task {
@@ -75,7 +101,7 @@ extension WeatherViewModel: LocationServiceDelegate {
         self.location = location
         
         Task {
-            await fetchWeather(for: location)
+            try? await fetchWeather(for: location)
         }
     }
     

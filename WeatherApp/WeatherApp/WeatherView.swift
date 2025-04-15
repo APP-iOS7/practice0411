@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreLocation
 
-// TODO: ViewModel 생성 후 View 연결
 struct WeatherView: View {
     
     @StateObject private var viewModel = WeatherViewModel()
@@ -20,9 +19,13 @@ struct WeatherView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                
-                WeatherInfoView(weather: viewModel.weather ?? WeatherData(temperature: 0, description: "clear", humidity: 0, windSpeed: 0))
-                
+                if let weather = viewModel.weather {
+                    WeatherInfoView(weather: weather)
+                } else {
+                    // TODO: 날씨 없을때 뷰
+                    Text("Empty")
+                }
+
                 RefreshButton(isLoading: viewModel.isLoading) {
                     viewModel.refreshWeather()
                 }
@@ -42,7 +45,7 @@ struct WeatherView: View {
 
 struct WeatherInfoView: View {
     let weather: WeatherData
-    
+
     var body: some View {
         
         VStack(alignment: .center, spacing: 16) {
