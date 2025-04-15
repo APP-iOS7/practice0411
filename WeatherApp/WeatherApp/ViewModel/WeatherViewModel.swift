@@ -14,14 +14,14 @@ enum APIError: Error, LocalizedError {
     case unknownError
     case typeDenied
     case rangeError
-    
+
     var errorDescription: String? {
         switch self {
         case .permissionDenied: return WeatherError.permissionDenied.errorDescription
         case .unknownError: return "알 수 없는 오류"
         case .typeDenied: return "올바른 타입이 아닙니다."
         case .rangeError: return "위도 경도의 올바른 범위가 아닙니다."
-            
+
         }
     }
 }
@@ -32,8 +32,20 @@ class WeatherViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var error: Error?
     @Published var location: CLLocation = CLLocation.init()
-    
-    func fetchWeather() async -> Bool {
+    @Published var latitude: String = ""
+    @Published var longitude: String = ""
+
+    var customLocationEnabled: Bool {
+        if let latDouble = Double(latitude),
+           let longDouble = Double(longitude),
+           latDouble >= -90, latDouble <= 90, longDouble >= -180, longDouble <= 180 {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    func fetchWeather() async {
         do {
             isLoading = true
             let locationService = LocationService()
@@ -42,25 +54,26 @@ class WeatherViewModel: ObservableObject {
             guard let currentLocation = locationService.setCurrentCLLocation() else {
                 debugPrint("위치 정보가 없습니다.")
                 isLoading = false
-                return false
+                resetWeather()
+                return
             }
             location = currentLocation
             weather = try await WeatherService.fetchWeather(for: currentLocation)
             isLoading = false
-            return true
+            latitude = "\(currentLocation.coordinate.latitude)"
+            longitude = "\(currentLocation.coordinate.longitude)"
         } catch {
             debugPrint("날씨 정보 가져오기 실패: \(error)")
-            isLoading = false
-            return false
+            resetWeather()
         }
     }
-    
-    func fetchCustomLocationWeather(_ latitude: String, _ longitude: String) async {
+
+    func fetchCustomLocationWeather() async {
         do {
             guard let latDouble = Double(latitude), let longDouble = Double(longitude) else {
                 throw APIError.typeDenied
             }
-            
+
             guard latDouble >= -90, latDouble <= 90, longDouble >= -180, longDouble <= 180 else {
                 throw APIError.rangeError
             }
@@ -78,9 +91,11 @@ class WeatherViewModel: ObservableObject {
             debugPrint("예상치 못한 오류 \(error)")
         }
     }
-    
+
     func resetWeather() {
+        error = nil
+        latitude = ""
+        longitude = ""
         weather = WeatherData.empty
     }
-    
 }
